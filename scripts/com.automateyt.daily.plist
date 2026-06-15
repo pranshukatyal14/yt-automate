@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS launchd job — runs daily_run.py once a day at POST_TIME.
+
+  Install:
+      cp scripts/com.automateyt.daily.plist ~/Library/LaunchAgents/
+      launchctl load ~/Library/LaunchAgents/com.automateyt.daily.plist
+
+  Uninstall:
+      launchctl unload ~/Library/LaunchAgents/com.automateyt.daily.plist
+      rm ~/Library/LaunchAgents/com.automateyt.daily.plist
+
+  Edit the Hour/Minute keys below to match your POST_TIME.
+  Hour/Minute are in LOCAL machine time — make sure your Mac's timezone
+  matches POST_TZ in .env.
+
+  NOTE: Your Mac must be awake at the trigger time. If you need reliability
+  on a sleeping laptop, use a cloud VM with a cron job instead (see docs).
+-->
+<plist version="1.0">
+<dict>
+
+  <key>Label</key>
+  <string>com.automateyt.daily</string>
+
+  <!-- ── Trigger: once per day at Hour:Minute (local machine time) ── -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>8</integer>     <!-- 08:00 IST = 02:30 UTC = 21:30 EST (prev day) -->
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <!-- ── Command ── -->
+  <key>ProgramArguments</key>
+  <array>
+    <!-- Absolute path to the venv python — adjust if your project root differs -->
+    <string>/Users/pranshukatyal/Documents/pranshu Proj/automate-yt/.venv/bin/python3</string>
+    <string>/Users/pranshukatyal/Documents/pranshu Proj/automate-yt/scripts/daily_run.py</string>
+  </array>
+
+  <!-- ── Working directory ── -->
+  <key>WorkingDirectory</key>
+  <string>/Users/pranshukatyal/Documents/pranshu Proj/automate-yt</string>
+
+  <!-- ── Logs ── -->
+  <key>StandardOutPath</key>
+  <string>/Users/pranshukatyal/Documents/pranshu Proj/automate-yt/logs/daily.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/pranshukatyal/Documents/pranshu Proj/automate-yt/logs/daily_error.log</string>
+
+  <!-- Run even if the trigger was missed (e.g. Mac was asleep) -->
+  <key>RunAtLoad</key>
+  <false/>
+
+</dict>
+</plist>

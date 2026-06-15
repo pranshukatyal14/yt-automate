@@ -1,0 +1,32 @@
+# Core AI / Script
+google-genai>=1.0.0              # new unified Gemini SDK (replaces google-generativeai)
+
+# Text-to-Speech
+edge-tts>=6.1.9
+
+# Local Transcription
+faster-whisper>=1.0.0
+
+# Video Editing
+moviepy>=1.0.3
+imageio[ffmpeg]>=2.34.0
+
+# Database
+pymongo>=4.7.0
+motor>=3.4.0          # async driver (used optionally)
+
+# HTTP / Scraping
+requests>=2.31.0
+httpx>=0.27.0
+pytrends>=4.9.2        # Google Trends scraper for auto trending topic research
+
+# YouTube Upload
+google-api-python-client>=2.130.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.2.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.7.0
+tenacity>=8.3.0        # retry logic
+colorlog>=6.8.0        # colored console logging

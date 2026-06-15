@@ -1,0 +1,30 @@
+# Secrets & credentials — NEVER commit these
+.env
+*.env
+client_secrets.json
+token.json
+
+# Generated output — too large for git
+output/
+logs/
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# ffmpeg temp files
+_raw_*.mp3
+_raw_*.mp4
+.claude/
+progressTracker/
