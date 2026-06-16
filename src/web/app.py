@@ -22,6 +22,7 @@ from src.db.models import VideoRepository
 from src.orchestrator import _parse_schedule, run_pipeline
 
 app = Flask(__name__, template_folder="templates")
+logger = logging.getLogger(__name__)
 
 # run_id -> state dict
 _runs: dict[str, dict] = {}
@@ -70,14 +71,50 @@ class _RunLogHandler(logging.Handler):
                 run["progress"][m.group(1)] = int(m.group(2))
 
 
+# ── Slot schedule (IST = UTC+5.5) ─────────────────────────────────────────────
+_SLOT_SCHEDULE_IST: dict[str, tuple[int, int]] = {
+    "player_story": (8,  0),   # 08:00 IST
+    "match_result": (14, 0),   # 14:00 IST
+    "fact":         (20, 0),   # 20:00 IST
+}
+
+_run_alls: dict[str, dict] = {}
+
+
+def _calc_slot_publish_at(slot_type: str):
+    """Return UTC datetime for slot's publish window, or None if already past."""
+    from datetime import datetime, timedelta, timezone
+    hh_mm = _SLOT_SCHEDULE_IST.get(slot_type)
+    if not hh_mm:
+        return None
+    hh, mm = hh_mm
+    tz_offset = float(os.getenv("POST_TZ", "5.5").lstrip("+"))
+    offset_td = timedelta(hours=tz_offset)
+    now_utc   = datetime.now(timezone.utc)
+    local_now = now_utc + offset_td
+    slot_local = local_now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    slot_utc   = slot_local - offset_td
+    # If the slot window has already passed, schedule 15 min from now
+    # so YouTube still receives it as a future-scheduled upload.
+    if slot_utc <= now_utc:
+        from datetime import timedelta as _td
+        return now_utc + _td(minutes=15)
+    return slot_utc
+
+
 def _run_pipeline_bg(run_id: str, data: dict) -> None:
     thread_id = threading.current_thread().ident
     handler = _RunLogHandler(run_id, thread_id)
     root_logger = logging.getLogger()
     root_logger.addHandler(handler)
     try:
-        schedule_str = data.get("schedule", "").strip()
-        publish_at = _parse_schedule(schedule_str) if schedule_str else None
+        pub_utc_str = data.get("publish_at_utc")
+        if pub_utc_str:
+            from datetime import datetime, timezone as _tz
+            publish_at = datetime.fromisoformat(pub_utc_str).replace(tzinfo=_tz.utc)
+        else:
+            schedule_str = data.get("schedule", "").strip()
+            publish_at = _parse_schedule(schedule_str) if schedule_str else None
 
         result = run_pipeline(
             topic=data.get("topic") or None,
@@ -107,6 +144,129 @@ def _run_pipeline_bg(run_id: str, data: dict) -> None:
             _runs[run_id]["error"] = str(exc)
     finally:
         root_logger.removeHandler(handler)
+
+
+# ── Run-all (3 slots sequentially) ────────────────────────────────────────────
+
+def _run_all_bg(run_all_id: str, slot_types: list[str]) -> None:
+    for slot_type in slot_types:
+        run_id    = uuid.uuid4().hex[:8]
+        pub_at    = _calc_slot_publish_at(slot_type)
+        pub_str   = pub_at.isoformat() if pub_at else None
+
+        with _lock:
+            _run_alls[run_all_id]["slots"][slot_type].update(
+                {"run_id": run_id, "status": "running", "scheduled_for": pub_str}
+            )
+            _runs[run_id] = {
+                "status":   "running",
+                "stage":    0,
+                "progress": {},
+                "logs":     [],
+                "result":   {},
+                "error":    "",
+                "_thread":  threading.current_thread(),
+            }
+
+        data = {
+            "upload":         True,
+            "style":          "factual",
+            "lang":           "en",
+            "video_type":     slot_type,
+            "publish_at_utc": pub_str,
+        }
+        _run_pipeline_bg(run_id, data)   # blocks until this slot finishes
+
+        with _lock:
+            final = _runs[run_id]["status"]
+            _run_alls[run_all_id]["slots"][slot_type]["status"] = final
+            result = _runs[run_id].get("result", {})
+            if result.get("youtube_url"):
+                _run_alls[run_all_id]["slots"][slot_type]["youtube_url"] = result["youtube_url"]
+
+    with _lock:
+        all_ok = all(
+            v["status"] == "complete"
+            for v in _run_alls[run_all_id]["slots"].values()
+        )
+        _run_alls[run_all_id]["status"] = "complete" if all_ok else "partial_fail"
+
+    # ── Analytics report for previous days' videos ─────────────────────────
+    try:
+        from src.analytics.daily_report import run_daily_report
+        logger.info("Running daily analytics report…")
+        run_daily_report(skip_analytics_fetch=False)
+    except Exception as exc:
+        logger.warning("Daily analytics report failed: %s", exc)
+
+
+@app.route("/api/run-all-today", methods=["POST"])
+def run_all_today():
+    try:
+        repo = VideoRepository(
+            mongo_uri=os.environ["MONGO_URI"],
+            db_name=os.getenv("MONGO_DB_NAME", "automate_yt"),
+        )
+        plan = repo.get_today_plan()
+        repo.close()
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
+    pending = [s["type"] for s in plan["slots"] if not s["done"]]
+    if not pending:
+        return jsonify({"done": True, "message": "All 3 slots already done today!"})
+
+    run_all_id = uuid.uuid4().hex[:8]
+    slot_init  = {}
+    for s in plan["slots"]:
+        pub_at = _calc_slot_publish_at(s["type"])
+        slot_init[s["type"]] = {
+            "run_id":        None,
+            "status":        "complete" if s["done"] else ("queued" if s["type"] in pending else "skipped"),
+            "scheduled_for": pub_at.isoformat() if pub_at else None,
+            "youtube_url":   f"https://youtu.be/{s['youtube_id']}" if s.get("youtube_id") else None,
+        }
+
+    with _lock:
+        _run_alls[run_all_id] = {"status": "running", "slots": slot_init}
+
+    t = threading.Thread(target=_run_all_bg, args=(run_all_id, pending), daemon=True)
+    t.start()
+    return jsonify({"run_all_id": run_all_id, "pending_slots": pending})
+
+
+@app.route("/api/run-all-status/<run_all_id>")
+def run_all_status(run_all_id: str):
+    with _lock:
+        state = _run_alls.get(run_all_id)
+    if state is None:
+        return jsonify({"error": "not found"}), 404
+
+    result = {"status": state["status"], "slots": {}}
+    for slot_type, slot_data in state["slots"].items():
+        run_id   = slot_data.get("run_id")
+        enriched = dict(slot_data)
+        if run_id:
+            with _lock:
+                run = _runs.get(run_id, {})
+            enriched["stage"]    = run.get("stage", 0)
+            enriched["progress"] = run.get("progress", {})
+        result["slots"][slot_type] = enriched
+    return jsonify(result)
+
+
+@app.route("/api/daily-report", methods=["POST"])
+def trigger_daily_report():
+    """Manually trigger analytics report. Pass ?test=1 to include today's videos."""
+    test_mode = request.args.get("test", "0") == "1"
+    def _bg():
+        try:
+            from src.analytics.daily_report import run_daily_report
+            run_daily_report(skip_analytics_fetch=False, test_mode=test_mode)
+        except Exception as exc:
+            logger.warning("Manual daily report failed: %s", exc)
+    threading.Thread(target=_bg, daemon=True).start()
+    return jsonify({"status": "started", "test_mode": test_mode})
 
 
 @app.route("/api/daily-plan")

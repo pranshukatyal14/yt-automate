@@ -79,6 +79,7 @@ def new_video_document(trend_topic: str) -> dict[str, Any]:
             "description": None,
             "tags":        [],
             "youtube_id":  None,
+            "youtube_url": None,
             "comment_id":  None,
         },
         "analytics":     None,
@@ -155,8 +156,9 @@ class VideoRepository:
 
     def set_uploaded(self, doc_id: str, youtube_id: str) -> None:
         self._update(doc_id, {
-            "metadata.youtube_id": youtube_id,
-            "status":              VideoStatus.COMPLETED,
+            "metadata.youtube_id":  youtube_id,
+            "metadata.youtube_url": f"https://youtu.be/{youtube_id}",
+            "status":               VideoStatus.COMPLETED,
         })
 
     def set_thumbnail(self, doc_id: str, thumbnail_path: str) -> None:

@@ -420,6 +420,29 @@
     .slot-yt-link { font-size: 11px; margin-top: 4px; }
     .slot-yt-link a { color: #4f46e5; text-decoration: none; font-weight: 500; }
     .slot-yt-link a:hover { text-decoration: underline; }
+    .slot-sched { font-size: 11px; margin-top: 3px; color: #7c3aed; font-weight: 500; }
+    .slot-failed .slot-status { color: #dc2626; }
+
+    .btn-run-all-today {
+      width: 100%; margin-top: 14px;
+      padding: 12px;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-run-all-today:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-run-all-today:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .slot-mini-bar {
+      width: 100%; height: 3px; background: #e2e8f0;
+      border-radius: 3px; margin-top: 5px; overflow: hidden;
+    }
+    .slot-mini-bar-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      border-radius: 3px; transition: width 0.4s;
+    }
   </style>
 </head>
 <body>
@@ -438,6 +461,9 @@
     <div class="plan-slots" id="planSlots">
       <div style="color:#94a3b8;font-size:13px;">Loading today's plan…</div>
     </div>
+    <button class="btn-run-all-today" id="runAllTodayBtn" onclick="runAllToday()">
+      🗓️&nbsp; Create &amp; Schedule All 3 Videos
+    </button>
   </div>
 
   <!-- ── Tab bar ── -->
@@ -498,16 +524,23 @@
         const isDone = slot.done;
         const isNext = slot.type === plan.next_type;
         const cls    = isDone ? 'slot-done' : (isNext ? 'slot-next' : '');
-        const status = isDone ? '✅ Uploaded' : (isNext ? '▶ Next to run' : '⬜ Pending');
+        const status = isDone ? '✅ Scheduled' : (isNext ? '▶ Next to run' : '⬜ Pending');
+        const schedLabel = SLOT_SCHEDULE_LABEL[slot.type] || '';
         const ytLink = isDone && slot.youtube_id
           ? `<div class="slot-yt-link"><a href="https://youtu.be/${slot.youtube_id}" target="_blank">youtu.be/${slot.youtube_id}</a></div>`
           : '';
+        const schedHint = !isDone
+          ? `<div class="slot-sched">🕐 ${schedLabel}</div>`
+          : '';
+        const miniBar = `<div class="slot-mini-bar"><div class="slot-mini-bar-fill" style="width:${isDone?'100':'0'}%"></div></div>`;
         return `
-          <div class="plan-slot ${cls}">
+          <div class="plan-slot ${cls}" data-slot-type="${slot.type}">
             <div class="slot-emoji">${slot.emoji}</div>
             <div class="slot-label">${slot.label}</div>
             <div class="slot-status">${status}</div>
+            ${schedHint}
             ${ytLink}
+            ${miniBar}
           </div>`;
       }).join('');
 
@@ -887,6 +920,113 @@
       .replace(/&/g,'&amp;')
       .replace(/</g,'&lt;')
       .replace(/>/g,'&gt;');
+  }
+
+  // ── Run All 3 Today ────────────────────────────────────────────────────────
+
+  const SLOT_SCHEDULE_LABEL = {
+    player_story: '8:00 AM IST',
+    match_result: '2:00 PM IST',
+    fact:         '8:00 PM IST',
+  };
+  const STEP_STAGE_LABEL = ['Starting…','Scripting…','Voicing…','Transcribing…','Rendering…','Uploading…'];
+
+  let runAllId    = null;
+  let runAllTimer = null;
+
+  async function runAllToday() {
+    const btn = document.getElementById('runAllTodayBtn');
+    btn.disabled    = true;
+    btn.textContent = '⏳ Starting…';
+
+    try {
+      const r    = await fetch('/api/run-all-today', { method: 'POST' });
+      const data = await r.json();
+
+      if (data.done) {
+        btn.textContent = '✅ All 3 already done today!';
+        return;
+      }
+      if (data.error) {
+        btn.disabled    = false;
+        btn.textContent = '🗓️ Create & Schedule All 3 Videos';
+        alert('Error: ' + data.error);
+        return;
+      }
+
+      runAllId    = data.run_all_id;
+      btn.textContent = '⏳ Running…';
+      runAllTimer = setInterval(pollRunAll, 2000);
+    } catch(e) {
+      btn.disabled    = false;
+      btn.textContent = '🗓️ Create & Schedule All 3 Videos';
+    }
+  }
+
+  async function pollRunAll() {
+    if (!runAllId) return;
+    try {
+      const r    = await fetch(`/api/run-all-status/${runAllId}`);
+      const data = await r.json();
+      if (!data || data.error) return;
+
+      // Update each slot card in-place
+      for (const [slotType, slotData] of Object.entries(data.slots)) {
+        updateRunAllSlot(slotType, slotData);
+      }
+
+      if (data.status === 'complete' || data.status === 'partial_fail') {
+        clearInterval(runAllTimer);
+        runAllTimer = null;
+        runAllId    = null;
+        const btn = document.getElementById('runAllTodayBtn');
+        btn.disabled    = false;
+        btn.textContent = data.status === 'complete'
+          ? '✅ All 3 scheduled!'
+          : '⚠️ Some failed — check below';
+        loadDailyPlan();
+      }
+    } catch {}
+  }
+
+  function updateRunAllSlot(slotType, slotData) {
+    const el = document.querySelector(`[data-slot-type="${slotType}"]`);
+    if (!el) return;
+
+    const statusEl = el.querySelector('.slot-status');
+    const barFill  = el.querySelector('.slot-mini-bar-fill');
+    const ytLinkEl = el.querySelector('.slot-yt-link');
+    const schedEl  = el.querySelector('.slot-sched');
+
+    el.className = 'plan-slot';
+
+    if (slotData.status === 'complete') {
+      el.classList.add('slot-done');
+      statusEl.textContent = '✅ Scheduled';
+      if (barFill) barFill.style.width = '100%';
+      if (schedEl && slotData.scheduled_for) {
+        const dt = new Date(slotData.scheduled_for);
+        schedEl.textContent = '⏰ Goes live ' + dt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+      }
+      if (ytLinkEl && slotData.youtube_url) {
+        ytLinkEl.innerHTML = `<a href="${slotData.youtube_url}" target="_blank">${slotData.youtube_url}</a>`;
+      }
+    } else if (slotData.status === 'running') {
+      el.classList.add('slot-next');
+      const stage = slotData.stage || 0;
+      statusEl.textContent = '⏳ ' + (STEP_STAGE_LABEL[stage] || 'Running…');
+      if (barFill) {
+        const pct = slotData.progress
+          ? Object.values(slotData.progress).reduce((a,b)=>a+b,0) / 5
+          : (stage / 6 * 100);
+        barFill.style.width = Math.min(pct, 95) + '%';
+      }
+    } else if (slotData.status === 'failed') {
+      statusEl.textContent = '❌ Failed';
+    } else if (slotData.status === 'queued') {
+      statusEl.textContent = '⬜ Queued';
+      if (schedEl) schedEl.textContent = '🕐 ' + (SLOT_SCHEDULE_LABEL[slotType] || '');
+    }
   }
 
   init();

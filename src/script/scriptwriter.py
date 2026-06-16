@@ -54,11 +54,17 @@ Critical human-voice rules — break these and the script fails:
 HOOK MANDATE — The Golden 2 Seconds (Pattern Interrupt):
 The hook must be the VERY first thing heard — no intro, no name, no "hey guys".
 Pick ONE of these four hook types and execute it hard:
-  A) Negative Curiosity: "Most people are doing [X] wrong, and it's costing them [Y]."
-  B) Specific Promise:   "I discovered [specific surprising fact] — here's exactly what happened."
-  C) The Secret Hook:    "They don't want you to know this one thing about [topic]."
-  D) The Shock Fact:     "Did you know [genuinely surprising, highly specific fact about topic]?"
+  A) Shock Stat:       "[Player Name] scored/did [specific number] — and nobody is talking about this."
+  B) Controversy Drop: "[Specific moment/decision] just changed everything about [tournament/player]."
+  C) Emotional Stakes: "This is [player]'s last shot at [specific dream] — and most fans don't get it."
+  D) Prediction Bomb:  "[Specific bold prediction about a World Cup moment] — and here's why."
 Hook must be ≤15 words. No warm-up. Drop the listener INTO the story immediately.
+BANNED HOOK PATTERNS — never use these tired templates:
+  ✗ "They don't want you to know this one thing about..."
+  ✗ "Most guys are killing their potential..."
+  ✗ "Did you know [vague statement]?"
+  ✗ "This is it. The end." (too vague)
+Always NAME the player or match — "Mbappe", "Messi", "Brazil vs Argentina" beats any generic opener.
 
 SCRIPT LENGTH: Write exactly 130–160 words total (hook + body + call_to_action combined).
 This produces a 50–60 second Short — the optimal length for 2026 watch-time algorithms.
@@ -136,8 +142,11 @@ Write the script now. Return a single JSON object with exactly these keys:
   title            (str — YouTube Shorts title ≤92 chars. CRITICAL: front-load the
                     strongest keyword/hook in the first 40 chars — that's all search
                     results, channel pages and suggested cards show on mobile.
-                    Use power words: "Secret", "Nobody Tells You", "Shocking", "Actually",
-                    "Wild", "Insane", "Real Truth", "Hidden". Reads like a human wrote it.
+                    ALWAYS NAME the player or match in the first 5 words — "Mbappe Scores
+                    5 Goals in One Half" beats "Shocking World Cup Moment".
+                    Allowed power words: "Shocking", "Wild", "Insane", "GOAT", numbers,
+                    "World Cup 2026". BANNED title words: "Nobody Tells You", "Hidden",
+                    "Secret", "They Don't Want". Reads like a human wrote it.
                     Optionally end with ONE relevant emoji (never start with emoji —
                     it pushes the keyword out of the visible search snippet).
                     Do NOT include #Shorts in the title — that is added automatically.),

@@ -38,6 +38,7 @@ load_dotenv()
 
 from src.audio.voice_service import VoiceService
 from src.db.models import VideoRepository, VideoStatus
+from src.notify import tg_stage, tg_success, tg_error
 from src.script.scriptwriter import ScriptwriterService
 from src.transcribe.transcription_service import TranscriptionService
 from src.trend.trend_researcher import TrendResearcher
@@ -285,12 +286,19 @@ def run_pipeline(
         )
         logger.info("[1/6] Script complete — keywords=%s", script["visual_keywords"])
         logger.info("[PROGRESS:scripting:100]")
+        tg_stage("✍️ Scripting done", script["title"][:80], video_type)
 
         # ── 2. Voice synthesis ─────────────────────────────────────────────────
         logger.info("[2/6] Generating voiceover…")
         logger.info("[PROGRESS:voicing:5]")
 
-        voice_svc = VoiceService(lang=lang)
+        _VOICE_BY_TYPE = {
+            "player_story": "en-US-BrianNeural",
+            "match_result": "en-US-BrianNeural",
+            "fact":         "en-US-AriaNeural",
+        }
+        selected_voice = _VOICE_BY_TYPE.get(video_type or "", None)
+        voice_svc = VoiceService(lang=lang, voice=selected_voice)
         spoken_text = VoiceService.script_to_spoken_text(script)
         logger.info("[PROGRESS:voicing:20]")
         audio_path = voice_svc.synthesise(spoken_text, filename=f"{run_id}_voice")
@@ -299,6 +307,7 @@ def run_pipeline(
         result["audio_path"] = str(audio_path)
         logger.info("[2/6] Audio saved: %s", audio_path)
         logger.info("[PROGRESS:voicing:100]")
+        tg_stage("🎙️ Voiceover done", f"{audio_path.stem} — {spoken_text[:60]}…", video_type)
 
         # ── 3. Transcription ───────────────────────────────────────────────────
         logger.info("[3/6] Transcribing audio…")
@@ -313,6 +322,7 @@ def run_pipeline(
         repo.set_transcript(doc_id, word_timestamps)
         logger.info("[3/6] Transcription done — %d words, %d captions", len(word_timestamps), len(captions))
         logger.info("[PROGRESS:transcribing:100]")
+        tg_stage("📝 Transcription done", f"{len(word_timestamps)} words — {len(captions)} captions", video_type)
 
         # ── 4. Video editing ───────────────────────────────────────────────────
         logger.info("[4/6] Rendering video…")
@@ -333,6 +343,7 @@ def run_pipeline(
         result["video_path"] = str(video_path)
         logger.info("[4/6] Video rendered: %s", video_path)
         logger.info("[PROGRESS:editing:100]")
+        tg_stage("🎬 Rendering done", "Video ready — starting upload", video_type)
 
         # ── 4.25 Thumbnail generation ─────────────────────────────────────────
         try:
@@ -368,22 +379,41 @@ def run_pipeline(
 
             uploader = YouTubeUploader()
             logger.info("[PROGRESS:uploading:8]")
+
+            # Normalise publish_at: uploader needs RFC 3339 str; tg_success needs display str
+            from datetime import datetime as _dt
+            if isinstance(publish_at, _dt):
+                publish_at_str = publish_at.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                publish_at_display = publish_at.strftime("%Y-%m-%d %H:%M")
+            elif isinstance(publish_at, str):
+                publish_at_str = publish_at
+                publish_at_display = publish_at
+            else:
+                publish_at_str = None
+                publish_at_display = None
+
             youtube_id = uploader.upload(
                 video_path=video_path,
                 title=meta["title"],
                 description=meta["description"],
                 tags=meta["tags"],
                 privacy="public",
-                publish_at=publish_at,
+                publish_at=publish_at_str,
             )
             repo.set_uploaded(doc_id, youtube_id)
             result["youtube_id"] = youtube_id
             result["youtube_url"] = f"https://youtu.be/{youtube_id}"
-            if publish_at:
-                logger.info("[5/6] Uploaded (scheduled for %s)! https://youtu.be/%s", publish_at, youtube_id)
+            if publish_at_str:
+                logger.info("[5/6] Uploaded (scheduled for %s)! https://youtu.be/%s", publish_at_display, youtube_id)
             else:
                 logger.info("[5/6] Uploaded! https://youtu.be/%s", youtube_id)
             logger.info("[PROGRESS:uploading:100]")
+            tg_success(
+                yt_url=f"https://youtu.be/{youtube_id}",
+                topic=topic,
+                scheduled_for=publish_at_display,
+                video_type=video_type,
+            )
 
             # ── 5b. Auto-comment from comment_bait ────────────────────────────
             # Skip when scheduled: video is private until publish_at and the
@@ -424,6 +454,7 @@ def run_pipeline(
         error_msg = f"{type(exc).__name__}: {exc}"
         logger.exception("PIPELINE FAILED at doc_id=%s — %s", doc_id, error_msg)
         repo.set_failed(doc_id, error_msg)
+        tg_error(error_msg, video_type)
         raise
 
     finally:
