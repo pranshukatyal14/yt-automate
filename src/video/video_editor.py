@@ -610,7 +610,7 @@ class VideoEditorService:
         output_filename: str,
         lang: str = "en",
         hook_text: str | None = None,
-        hook_card_duration: float = 0.8,
+        hook_card_duration: float = 0.5,
     ) -> Path:
         """
         Full render pipeline.

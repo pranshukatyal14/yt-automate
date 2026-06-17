@@ -66,8 +66,24 @@ BANNED HOOK PATTERNS — never use these tired templates:
   ✗ "This is it. The end." (too vague)
 Always NAME the player or match — "Mbappe", "Messi", "Brazil vs Argentina" beats any generic opener.
 
-SCRIPT LENGTH: Write exactly 130–160 words total (hook + body + call_to_action combined).
-This produces a 50–60 second Short — the optimal length for 2026 watch-time algorithms.
+SCRIPT LENGTH: Write exactly 90–120 words total (hook + body + call_to_action combined).
+This produces a tight 30–40 second Short. Shorter = higher completion rate, the single
+biggest Shorts ranking signal. Every word must earn its place — cut anything that doesn't
+build tension or pay it off. Do NOT pad to hit a length.
+
+OPEN LOOP MANDATE — the retention engine:
+The hook must open a SPECIFIC unresolved question or promise that is ONLY paid off in the
+final line. The viewer must feel they CANNOT leave without the answer.
+  e.g. Hook: "Messi did something in the 89th minute that no one in 96 years has ever done."
+       (the "what" is withheld — body builds it — final line reveals it)
+Never reveal the payoff in the hook itself. Tease it, then deliver at the end.
+
+RETENTION SPIKE — beat the mid-video drop:
+At roughly the halfway point of the body, insert ONE re-hook line that re-escalates
+curiosity and resets attention. Make it punchy and standalone.
+  e.g. "But that's not even the crazy part —", "Now here's where it gets unreal —",
+       "And then it flipped completely."
+This combats the swipe-away that kills retention around the 40–60% mark.
 
 LOOP ARCHITECTURE — make viewers re-watch:
 The last line of call_to_action must flow seamlessly into the first word of hook when looped.
