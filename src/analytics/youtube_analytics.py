@@ -125,7 +125,7 @@ class YouTubeAnalytics:
             "window_days": days,
         }
 
-        # ── youtubeAnalytics v2: retention + watch-time + CTR ──────────────────
+        # ── youtubeAnalytics v2: retention + watch-time (core metrics) ─────────
         try:
             resp = self._yta.reports().query(
                 ids="channel==MINE",
@@ -133,8 +133,7 @@ class YouTubeAnalytics:
                 endDate=end.isoformat(),
                 metrics=(
                     "views,estimatedMinutesWatched,averageViewDuration,"
-                    "averageViewPercentage,subscribersGained,likes,comments,shares,"
-                    "impressions,impressionClickThroughRate"
+                    "averageViewPercentage,subscribersGained,likes,comments,shares"
                 ),
                 filters=f"video=={video_id}",
             ).execute()
@@ -146,6 +145,22 @@ class YouTubeAnalytics:
                 logger.info("No analytics rows yet for %s (may be too new)", video_id)
         except HttpError as exc:
             logger.warning("Analytics query failed for %s: %s", video_id, exc)
+
+        # ── Impressions + CTR (separate report — not always available) ─────────
+        try:
+            imp = self._yta.reports().query(
+                ids="channel==MINE",
+                startDate=start.isoformat(),
+                endDate=end.isoformat(),
+                metrics="impressions,impressionClickThroughRate",
+                filters=f"video=={video_id}",
+            ).execute()
+            imp_rows = imp.get("rows") or []
+            imp_headers = [h["name"] for h in imp.get("columnHeaders", [])]
+            if imp_rows:
+                out.update(dict(zip(imp_headers, imp_rows[0])))
+        except HttpError as exc:
+            logger.info("Impressions/CTR not available for %s: %s", video_id, str(exc)[:120])
 
         # ── youtube v3: lifetime aggregate counts (often more accurate near term) ─
         try:
