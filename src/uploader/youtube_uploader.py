@@ -21,10 +21,15 @@ from googleapiclient.http import MediaFileUpload
 
 logger = logging.getLogger(__name__)
 
-# force-ssl covers upload, thumbnail set, and comment posting — it is a
-# strict superset of youtube.upload and youtube.readonly so we need only this.
+# Full union of scopes shared with the analytics module. The uploader and
+# YouTubeAnalytics share token.json — if the uploader requested only force-ssl
+# it would strip the analytics scopes on every save, breaking the daily report.
+# Requesting the union keeps a single token valid for upload + analytics.
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.force-ssl",
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/yt-analytics.readonly",
+    "https://www.googleapis.com/auth/youtube.readonly",
 ]
 TOKEN_FILE      = "token.json"
 API_SERVICE     = "youtube"
