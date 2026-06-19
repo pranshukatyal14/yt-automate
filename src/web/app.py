@@ -219,6 +219,13 @@ def run_all_today():
     if not pending:
         return jsonify({"done": True, "message": "All 3 slots already done today!"})
 
+    # Backfill bait comments on previously-scheduled videos that are now public.
+    try:
+        from src.orchestrator import post_pending_comments
+        threading.Thread(target=post_pending_comments, daemon=True).start()
+    except Exception as exc:
+        logger.warning("post_pending_comments failed to start: %s", exc)
+
     run_all_id = uuid.uuid4().hex[:8]
     slot_init  = {}
     for s in plan["slots"]:

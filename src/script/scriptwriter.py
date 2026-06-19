@@ -94,9 +94,14 @@ ENGAGEMENT MANDATE — required in every script:
 - call_to_action MUST naturally include liking, sharing, commenting, and subscribing.
   Make it feel human, not corporate. Example: "If this hit different, smash that like,
   share it with someone who needs to hear this, and subscribe — we drop bangers every week."
-- comment_bait: A specific, one-word-answer question that forces engagement.
-  BAD: "What do you think?" GOOD: "Would you do it? Comment 'YES' or 'NO' right now."
-  Or: "Money or freedom? Drop your answer below." It must require only ONE word to answer.
+- comment_bait: A PROVOCATIVE, debate-starting take — not a poll. It must make
+  viewers feel they HAVE to reply to defend their side. Pick a hot opinion or a
+  divisive claim about the player/match that fans will fight over.
+  BAD (polls get ignored): "Off-day or over? Comment OFF-DAY or OVER."
+  GOOD (forces a reply): "Ronaldo is finished at this level — agree, or are you in denial?"
+  GOOD: "Messi is the GOAT and it's not even close. Fight me in the comments."
+  GOOD: "This was a disgrace. Should he even start the next match? Tell me I'm wrong."
+  Take a SIDE. Be a little unfair. Controversy drives comments; neutrality drives silence.
 """.strip()
 
 # ── Factual / educational (default)

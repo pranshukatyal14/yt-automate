@@ -461,6 +461,84 @@ def run_pipeline(
         repo.close()
 
 
+def post_pending_comments() -> dict:
+    """
+    Post bait comments on videos that were scheduled (private at upload time) and
+    have since gone public. The upload-time auto-comment is skipped for scheduled
+    videos because the API rejects comments on private videos — this backfills them.
+
+    Finds COMPLETED videos that have a youtube_id + a comment_bait in their script
+    but no comment_id yet, checks each is now public, and posts the bait comment.
+
+    Returns a summary dict: {posted, skipped_private, skipped_no_bait, errors}.
+    """
+    from dotenv import load_dotenv
+    load_dotenv()
+    from src.db.models import VideoRepository
+    from src.uploader.youtube_uploader import YouTubeUploader
+
+    repo = VideoRepository(
+        mongo_uri=os.environ["MONGO_URI"],
+        db_name=os.getenv("MONGO_DB_NAME", "automate_yt"),
+    )
+    summary = {"posted": 0, "skipped_private": 0, "skipped_no_bait": 0, "errors": 0}
+    try:
+        # Only recent videos (last 3 days) — avoids a large comment burst that
+        # could trip YouTube spam detection, and matches the real use case
+        # (backfilling the previous run's now-public scheduled videos).
+        from datetime import datetime as _dt2, timedelta as _td2, timezone as _tz2
+        cutoff = _dt2.now(_tz2.utc) - _td2(days=3)
+        candidates = list(repo._col.find({
+            "metadata.youtube_id": {"$ne": None},
+            "created_at": {"$gte": cutoff},
+            "$or": [
+                {"metadata.comment_id": None},
+                {"metadata.comment_id": {"$exists": False}},
+            ],
+        }))
+        if not candidates:
+            return summary
+
+        uploader = YouTubeUploader()
+        # Batch-check public status
+        ids = [c["metadata"]["youtube_id"] for c in candidates]
+        public = set()
+        for i in range(0, len(ids), 50):
+            chunk = ids[i:i + 50]
+            resp = uploader._service.videos().list(part="status", id=",".join(chunk)).execute()
+            for it in resp.get("items", []):
+                if it.get("status", {}).get("privacyStatus") == "public":
+                    public.add(it["id"])
+
+        for doc in candidates:
+            yt_id = doc["metadata"]["youtube_id"]
+            bait = ((doc.get("script_json") or {}).get("comment_bait") or "").strip()
+            if not bait:
+                summary["skipped_no_bait"] += 1
+                continue
+            if yt_id not in public:
+                summary["skipped_private"] += 1
+                continue
+            try:
+                comment_id = uploader.post_comment(yt_id, bait)
+                if comment_id:
+                    repo.set_comment(str(doc["_id"]), comment_id)
+                    summary["posted"] += 1
+                    logger.info("Backfilled bait comment on https://youtu.be/%s", yt_id)
+                else:
+                    summary["errors"] += 1
+            except Exception as exc:
+                summary["errors"] += 1
+                logger.warning("Failed to post comment on %s: %s", yt_id, str(exc)[:120])
+
+        if summary["posted"]:
+            logger.warning("Pending comments posted: %d (skipped %d still-private)",
+                           summary["posted"], summary["skipped_private"])
+        return summary
+    finally:
+        repo.close()
+
+
 # ── CLI entry point ────────────────────────────────────────────────────────────
 
 def _cli() -> None:

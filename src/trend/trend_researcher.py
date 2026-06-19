@@ -61,9 +61,16 @@ Your job:
 
 RANKING RULES — topics score higher when they:
 - Feature a star player by name (Messi, Ronaldo, Neymar, Mbappé, Vinicius Jr)
+- **Carry NEGATIVE drama / controversy / failure about a superstar** — this is the
+  #1 performance signal from our own data: "Ronaldo BLANKED vs DR Congo" did ~1000 views
+  while celebratory "Messi scores" stories did 5–350. Pick the angle a fan would ARGUE about.
+  Failure, red cards, chokes, benchings, feuds, criticism, "is he finished?" beat pure praise.
 - Include an actual match result with a scoreline from TODAY
 - Have emotional charge: shock, disbelief, controversy, record-breaking
 - Are time-sensitive (happening RIGHT NOW beats yesterday's news)
+
+ANGLE BIAS — when a topic CAN be framed as conflict/failure/controversy, frame it that way.
+"Mbappé struggles as France stutter" beats "Mbappé plays for France". Take the spicy angle.
 
 Return ONLY a JSON object with exactly these keys:
   winner_topic    (str — the exact topic/angle for the script, written as a punchy title.
