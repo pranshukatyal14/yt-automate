@@ -91,9 +91,18 @@ e.g. End: "And that is exactly..." Start: "...how it all began."
 The join must feel natural, not jarring.
 
 ENGAGEMENT MANDATE — required in every script:
-- call_to_action MUST naturally include liking, sharing, commenting, and subscribing.
-  Make it feel human, not corporate. Example: "If this hit different, smash that like,
-  share it with someone who needs to hear this, and subscribe — we drop bangers every week."
+- call_to_action: SUBSCRIBE is the priority — it is what unlocks the channel's growth.
+  Do NOT cram like + share + comment + subscribe into one breath; that dilutes everything
+  and converts nobody. Lead with ONE strong, specific subscribe reason tied to recurring
+  value, then a quick like nudge. Drop "share" entirely.
+- The subscribe ask must give a concrete REASON to subscribe RIGHT NOW, tied to the fact
+  that the World Cup is happening daily and you cover the drama every single day. Tease that
+  there's MORE coming tomorrow so missing it would hurt.
+  GOOD: "I'm breaking down every World Cup shock like this — daily. Subscribe now or you'll
+         miss tomorrow's, and trust me, tomorrow's is bigger. Like if Ronaldo let you down."
+  GOOD: "There's a new scandal every single day this World Cup and I cover all of them.
+         Hit subscribe so you don't miss the next one. Tap like if you saw this coming."
+  Make it feel like FOMO, not a corporate checklist. Subscribe = don't miss the daily drama.
 - comment_bait: A PROVOCATIVE, debate-starting take — not a poll. It must make
   viewers feel they HAVE to reply to defend their side. Pick a hot opinion or a
   divisive claim about the player/match that fans will fight over.

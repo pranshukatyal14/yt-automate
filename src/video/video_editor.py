@@ -518,6 +518,60 @@ def _render_hook_card(
     return clip.transform(zoom_punch)
 
 
+def _render_subscribe_badge(duration: float) -> ImageClip:
+    """
+    Full-frame transparent overlay with a red YouTube-style SUBSCRIBE pill in the
+    lower third, shown for the last few seconds. Drives subscriber conversion —
+    the metric that gates monetisation — without covering captions (which sit
+    centred) or the Shorts UI (bottom ~240px).
+    """
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    # Pill geometry — centred horizontally, low enough to clear captions
+    pill_w, pill_h = 760, 150
+    cx = W // 2
+    cy = int(H * 0.66)
+    x0, y0 = cx - pill_w // 2, cy - pill_h // 2
+    x1, y1 = cx + pill_w // 2, cy + pill_h // 2
+    radius = pill_h // 2
+
+    # Drop shadow then red pill
+    draw.rounded_rectangle([x0 + 6, y0 + 8, x1 + 6, y1 + 8], radius=radius, fill=(0, 0, 0, 150))
+    draw.rounded_rectangle([x0, y0, x1, y1], radius=radius, fill=(220, 0, 0, 255))
+
+    # Fonts
+    def _font(size):
+        for path in _FONT_MAP["default"]:
+            try:
+                return ImageFont.truetype(path, size)
+            except Exception:
+                continue
+        return ImageFont.load_default()
+
+    main_font = _font(74)
+    sub_font  = _font(40)
+
+    label = "SUBSCRIBE"
+    lw = draw.textlength(label, font=main_font)
+    draw.text((cx - lw / 2, cy - 52), label, font=main_font,
+              fill=(255, 255, 255, 255), stroke_width=2, stroke_fill=(120, 0, 0, 255))
+
+    sub = "daily World Cup drama"
+    sw = draw.textlength(sub, font=sub_font)
+    draw.text((cx - sw / 2, cy + 30), sub, font=sub_font,
+              fill=(255, 255, 255, 255), stroke_width=4, stroke_fill=(0, 0, 0, 220))
+
+    arr = np.array(img)
+    clip = ImageClip(arr).with_duration(duration)
+    # Gentle fade-in so it appears rather than pops
+    try:
+        clip = clip.with_effects([vfx.CrossFadeIn(0.3)])
+    except Exception:
+        pass
+    return clip
+
+
 # ── Cinematic frame processor ──────────────────────────────────────────────────
 
 def _cinematic_frame(frame: np.ndarray) -> np.ndarray:
@@ -659,6 +713,19 @@ class VideoEditorService:
                 logger.info("Hook card overlay added (duration=%.2fs)", card_dur)
             except Exception as exc:
                 logger.warning("Hook card render failed — continuing without: %s", exc)
+
+        # 4b. Subscribe badge in the last ~3s (drives sub conversion → monetisation)
+        try:
+            badge_dur = min(3.0, total_duration * 0.4)
+            if badge_dur > 0.5:
+                badge = (
+                    _render_subscribe_badge(badge_dur)
+                    .with_start(max(0.0, total_duration - badge_dur))
+                )
+                layers.append(badge)  # top layer, above captions
+                logger.info("Subscribe badge overlay added (last %.1fs)", badge_dur)
+        except Exception as exc:
+            logger.warning("Subscribe badge render failed — continuing without: %s", exc)
 
         final = (
             CompositeVideoClip(layers, size=(W, H))
