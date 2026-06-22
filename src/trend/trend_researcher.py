@@ -188,10 +188,13 @@ class TrendResearcher:
                     )
                 elif video_type == "fact":
                     football_clause = (
-                        " FOCUS: Search for the most surprising, little-known, or mind-blowing "
-                        "stats, records, and facts from the FIFA World Cup 2026 so far. "
-                        "Things like 'youngest goalscorer', 'most goals in a single game', "
-                        "'country that has never won a match until today', etc."
+                        " FOCUS: Find the most DIVISIVE hot-take or debate in World Cup 2026 "
+                        "football right now — the kind fans argue about in the comments. "
+                        "Think: 'Messi is overrated and the numbers prove it', "
+                        "'Ronaldo vs Messi — it's not even close', 'X is the most overrated team', "
+                        "'Y doesn't deserve to start', 'Z is finished'. Frame it as a bold OPINION "
+                        "or RANKING that takes a side and demands a reaction — NOT a neutral stat. "
+                        "Controversy and debate drive comments and shares."
                     )
                 else:
                     football_clause = (
@@ -320,7 +323,7 @@ class TrendResearcher:
         type_clause = {
             "player_story": "Focus on star football players: Messi, Ronaldo, Neymar, Mbappé, Vinicius Jr.",
             "match_result": "Focus on recent FIFA World Cup 2026 match results and scorelines.",
-            "fact":         "Focus on surprising stats, records, and facts from FIFA World Cup 2026.",
+            "fact":         "Focus on a DIVISIVE hot-take/debate fans argue about — e.g. 'Messi is overrated', 'Ronaldo is finished', 'X vs Y, not even close'. A bold opinion or ranking that takes a side, NOT a neutral stat.",
         }.get(video_type or "", "")
         prompt = (
             f"Give me a numbered list of 20 highly viral and trending topics right now {niche_clause}. "
