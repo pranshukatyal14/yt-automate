@@ -72,15 +72,15 @@ class _RunLogHandler(logging.Handler):
 
 
 # ── Slot schedule (IST = UTC+5.5) ─────────────────────────────────────────────
-# Evening-weighted: data (2026-06-17) showed the 20:00 IST slot far outperformed
-# daytime slots, so all four post in the 17:00–22:00 IST prime-time window (peak
-# Indian YouTube engagement), spaced ~1.5-2h apart to avoid cannibalising.
-# 4th slot "debate" added 2026-06-23 — controversy is the channel's best format.
+# GLOBAL-audience spread (geo data 2026-06-23: IN 30%, US 22% w/ best retention,
+# GB 13% — ~41% US/UK). Slots span 17:30–23:30 IST to cover India evening AND
+# stretch into UK evening prime (23:30 IST = 18:00 GMT) + US midday. Kept before
+# midnight so scheduled-publish times never fall in the past on an afternoon run.
 _SLOT_SCHEDULE_IST: dict[str, tuple[int, int]] = {
-    "player_story": (17, 0),   # 17:00 IST (5 PM)
-    "debate":       (18, 30),  # 18:30 IST (6:30 PM) — rivalry/hot-take
-    "match_result": (20, 0),   # 20:00 IST (8 PM) — proven best slot
-    "fact":         (22, 0),   # 22:00 IST (10 PM)
+    "player_story": (17, 30),  # 17:30 IST — IN eve / GB 13:00 / US 08:00
+    "debate":       (19, 30),  # 19:30 IST — IN eve / GB 15:00 / US 10:00
+    "match_result": (21, 30),  # 21:30 IST — IN peak / GB 17:00 / US 12:00
+    "fact":         (23, 30),  # 23:30 IST — IN late / GB 18:00 evening / US 13:00
 }
 
 _run_alls: dict[str, dict] = {}

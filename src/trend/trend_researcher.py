@@ -176,8 +176,13 @@ class TrendResearcher:
                         " FOCUS: Search specifically for the latest news, drama, controversy, "
                         "or viral moments involving individual star players — Lionel Messi, "
                         "Cristiano Ronaldo, Neymar Jr, Kylian Mbappé, Vinicius Jr, Erling Haaland. "
-                        "What are fans saying about them TODAY? Any records broken, arguments, "
-                        "injuries, emotional moments, or shocking performances?"
+                        "ALSO consider viral football CREATORS/PERSONALITIES whose moments blow up — "
+                        "e.g. IShowSpeed (and his Ronaldo obsession), other big football streamers, "
+                        "and famous fan/celebrity reactions to World Cup moments. These names pull "
+                        "huge search + algorithm traffic. NOTE: only build the story AROUND them as a "
+                        "topic (named in the title) — never assume we have their footage. "
+                        "What are fans saying TODAY? Any records, arguments, injuries, emotional "
+                        "moments, viral reactions, or shocking performances?"
                     )
                 elif video_type == "match_result":
                     football_clause = (
