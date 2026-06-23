@@ -41,6 +41,7 @@ def _now() -> datetime:
 
 DAILY_SLOTS = [
     {"type": "player_story", "label": "Star Player Story",  "emoji": "⭐"},
+    {"type": "debate",       "label": "Rivalry Debate",     "emoji": "🔥"},
     {"type": "match_result", "label": "Match Result",        "emoji": "⚽"},
     {"type": "fact",         "label": "Shocking Fact",       "emoji": "💡"},
 ]

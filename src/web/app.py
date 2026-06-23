@@ -73,12 +73,14 @@ class _RunLogHandler(logging.Handler):
 
 # ── Slot schedule (IST = UTC+5.5) ─────────────────────────────────────────────
 # Evening-weighted: data (2026-06-17) showed the 20:00 IST slot far outperformed
-# the daytime slots, so all three now post in the 17:00–22:00 IST prime-time
-# window (peak Indian YouTube engagement), spaced ~2.5h apart to avoid cannibalising.
+# daytime slots, so all four post in the 17:00–22:00 IST prime-time window (peak
+# Indian YouTube engagement), spaced ~1.5-2h apart to avoid cannibalising.
+# 4th slot "debate" added 2026-06-23 — controversy is the channel's best format.
 _SLOT_SCHEDULE_IST: dict[str, tuple[int, int]] = {
     "player_story": (17, 0),   # 17:00 IST (5 PM)
+    "debate":       (18, 30),  # 18:30 IST (6:30 PM) — rivalry/hot-take
     "match_result": (20, 0),   # 20:00 IST (8 PM) — proven best slot
-    "fact":         (22, 30),  # 22:30 IST (10:30 PM)
+    "fact":         (22, 0),   # 22:00 IST (10 PM)
 }
 
 _run_alls: dict[str, dict] = {}
@@ -217,7 +219,7 @@ def run_all_today():
 
     pending = [s["type"] for s in plan["slots"] if not s["done"]]
     if not pending:
-        return jsonify({"done": True, "message": "All 3 slots already done today!"})
+        return jsonify({"done": True, "message": "All 4 slots already done today!"})
 
     # Backfill bait comments on previously-scheduled videos that are now public.
     try:

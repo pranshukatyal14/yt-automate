@@ -186,6 +186,15 @@ class TrendResearcher:
                         "What was shocking or unexpected about the result? Any upsets, red cards, "
                         "last-minute goals, or VAR controversies? Include the scoreline in the topic."
                     )
+                elif video_type == "debate":
+                    football_clause = (
+                        " FOCUS: Find the single most HEATED rivalry or debate in World Cup 2026 "
+                        "football right now — Messi vs Ronaldo GOAT wars, 'who's the best player "
+                        "at this World Cup', 'most overrated star', bold winner/flop predictions, "
+                        "manager or tactical controversies, pundit hot-takes fans are fighting over. "
+                        "Pick the topic that splits fans hardest and forces them to pick a side. "
+                        "It MUST be an argument, not a fact — pure debate fuel."
+                    )
                 elif video_type == "fact":
                     football_clause = (
                         " FOCUS: Find the most DIVISIVE hot-take or debate in World Cup 2026 "
@@ -322,6 +331,7 @@ class TrendResearcher:
         niche_clause = f'for the niche: "{self._niche}"' if self._niche else "across entertainment, sports, and news"
         type_clause = {
             "player_story": "Focus on star football players: Messi, Ronaldo, Neymar, Mbappé, Vinicius Jr.",
+            "debate":       "Focus on a HEATED rivalry/debate fans fight over — Messi vs Ronaldo GOAT wars, 'best/most overrated player at the World Cup', bold winner/flop predictions, tactical controversies. Must be an argument that splits fans, NOT a fact.",
             "match_result": "Focus on recent FIFA World Cup 2026 match results and scorelines.",
             "fact":         "Focus on a DIVISIVE hot-take/debate fans argue about — e.g. 'Messi is overrated', 'Ronaldo is finished', 'X vs Y, not even close'. A bold opinion or ranking that takes a side, NOT a neutral stat.",
         }.get(video_type or "", "")

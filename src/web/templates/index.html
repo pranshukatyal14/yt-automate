@@ -462,7 +462,7 @@
       <div style="color:#94a3b8;font-size:13px;">Loading today's plan…</div>
     </div>
     <button class="btn-run-all-today" id="runAllTodayBtn" onclick="runAllToday()">
-      🗓️&nbsp; Create &amp; Schedule All 3 Videos
+      🗓️&nbsp; Create &amp; Schedule All 4 Videos
     </button>
   </div>
 
@@ -510,12 +510,13 @@
         banner.textContent = `▶ Next up: ${slot.emoji} ${slot.label}`;
         banner.classList.remove('hidden');
       } else {
-        banner.textContent = '✅ All 3 videos done for today!';
+        banner.textContent = '✅ All 4 videos done for today!';
         banner.classList.remove('hidden');
       }
 
       const TYPE_LABELS = {
         player_story: 'Player Story',
+        debate: 'Rivalry Debate',
         match_result: 'Match Result',
         fact: 'Shocking Fact',
       };
@@ -925,9 +926,10 @@
   // ── Run All 3 Today ────────────────────────────────────────────────────────
 
   const SLOT_SCHEDULE_LABEL = {
-    player_story: '8:00 AM IST',
-    match_result: '2:00 PM IST',
-    fact:         '8:00 PM IST',
+    player_story: '5:00 PM IST',
+    debate:       '6:30 PM IST',
+    match_result: '8:00 PM IST',
+    fact:         '10:00 PM IST',
   };
   const STEP_STAGE_LABEL = ['Starting…','Scripting…','Voicing…','Transcribing…','Rendering…','Uploading…'];
 
@@ -944,12 +946,12 @@
       const data = await r.json();
 
       if (data.done) {
-        btn.textContent = '✅ All 3 already done today!';
+        btn.textContent = '✅ All 4 already done today!';
         return;
       }
       if (data.error) {
         btn.disabled    = false;
-        btn.textContent = '🗓️ Create & Schedule All 3 Videos';
+        btn.textContent = '🗓️ Create & Schedule All 4 Videos';
         alert('Error: ' + data.error);
         return;
       }
@@ -959,7 +961,7 @@
       runAllTimer = setInterval(pollRunAll, 2000);
     } catch(e) {
       btn.disabled    = false;
-      btn.textContent = '🗓️ Create & Schedule All 3 Videos';
+      btn.textContent = '🗓️ Create & Schedule All 4 Videos';
     }
   }
 
@@ -982,7 +984,7 @@
         const btn = document.getElementById('runAllTodayBtn');
         btn.disabled    = false;
         btn.textContent = data.status === 'complete'
-          ? '✅ All 3 scheduled!'
+          ? '✅ All 4 scheduled!'
           : '⚠️ Some failed — check below';
         loadDailyPlan();
       }
