@@ -60,14 +60,7 @@ Your job:
 5. Recommend the style: "story" for narrative/drama, "factual" for facts/tips.
 
 RANKING RULES — topics score higher when they:
-- **AUDIENCE CEILING — prioritise the BIGGEST names above all else.** A video's view ceiling
-  is capped by how many people on earth care about the subject. Ronaldo and Messi each have
-  ~500M+ global fans — a Ronaldo/Messi topic can hit 2000+ views; a niche player (Vinicius,
-  a role player, a small nation) caps far lower. Our data confirms it: EVERY breakout we've
-  had is Ronaldo; niche-player videos underperform. So when choosing between equally dramatic
-  topics, ALWAYS pick the one with the biggest-name, most universally-known subject
-  (Ronaldo > Messi > Mbappé/Neymar > everyone else). Universal GOAT/"is he finished" debates
-  travel furthest.
+- Feature a star player by name (Messi, Ronaldo, Neymar, Mbappé, Vinicius Jr)
 - **Carry NEGATIVE drama / controversy / failure about a superstar** — this is the
   #1 performance signal from our own data: "Ronaldo BLANKED vs DR Congo" did ~1000 views
   while celebratory "Messi scores" stories did 5–350. Pick the angle a fan would ARGUE about.

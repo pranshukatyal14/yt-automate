@@ -66,11 +66,10 @@ BANNED HOOK PATTERNS — never use these tired templates:
   ✗ "This is it. The end." (too vague)
 Always NAME the player or match — "Mbappe", "Messi", "Brazil vs Argentina" beats any generic opener.
 
-SCRIPT LENGTH: Write exactly 70–95 words total (hook + body + call_to_action combined).
-This produces a razor-tight 25–32 second Short. Completion rate is THE biggest Shorts
-ranking signal, and shorter videos complete higher — which is how a 1K video becomes a
-2K video. Every single word must earn its place: cut adjectives, cut setup, cut anything
-that doesn't build tension or pay it off. When in doubt, cut it. Do NOT pad to hit a length.
+SCRIPT LENGTH: Write exactly 90–120 words total (hook + body + call_to_action combined).
+This produces a tight 30–40 second Short. Shorter = higher completion rate, the single
+biggest Shorts ranking signal. Every word must earn its place — cut anything that doesn't
+build tension or pay it off. Do NOT pad to hit a length.
 
 OPEN LOOP MANDATE — the retention engine:
 The hook must open a SPECIFIC unresolved question or promise that is ONLY paid off in the
@@ -86,14 +85,10 @@ curiosity and resets attention. Make it punchy and standalone.
        "And then it flipped completely."
 This combats the swipe-away that kills retention around the 40–60% mark.
 
-LOOP ARCHITECTURE — make viewers re-watch (this is a VIEW MULTIPLIER):
-Re-watches inflate watch-time, which the algorithm reads as "amazing video" and pushes
-to a bigger audience — the difference between a 1K and a 2K video. The last line of
-call_to_action MUST flow seamlessly into the first word of hook when the video loops,
-so a viewer who reaches the end is pulled straight back into the start without realising.
-  e.g. End: "...and that's exactly why nobody saw it coming."  Start (hook): "Nobody saw
-       what Ronaldo did next coming —"
-The join must feel deliberate and natural. Treat the seamless loop as REQUIRED, not optional.
+LOOP ARCHITECTURE — make viewers re-watch:
+The last line of call_to_action must flow seamlessly into the first word of hook when looped.
+e.g. End: "And that is exactly..." Start: "...how it all began."
+The join must feel natural, not jarring.
 
 ENGAGEMENT MANDATE — required in every script:
 - call_to_action: SUBSCRIBE is the priority — it is what unlocks the channel's growth.
