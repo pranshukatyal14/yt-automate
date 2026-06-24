@@ -78,6 +78,16 @@ final line. The viewer must feel they CANNOT leave without the answer.
        (the "what" is withheld — body builds it — final line reveals it)
 Never reveal the payoff in the hook itself. Tease it, then deliver at the end.
 
+NO POST-HOOK DIP — the #1 killer (data-proven):
+Retention curves show weak videos lose ~70% of viewers in the 2 seconds RIGHT AFTER the
+hook — the moment the body's first line starts. This is the single biggest drop point.
+The FIRST sentence of the body must ESCALATE the hook's intensity, never explain, set up,
+or give context. No "So here's the backstory…", no "Let me explain…", no calm scene-setting.
+The first body line should hit HARDER than the hook — a shocking detail, a number, a twist.
+  BAD (causes the cliff): Hook → "Now, to understand this, we need to go back to…"
+  GOOD (holds them):      Hook → "Ninety minutes. Zero shots on target. The GOAT looked lost."
+Momentum must keep climbing from hook into body — the viewer never gets a reason to swipe.
+
 RETENTION SPIKE — beat the mid-video drop:
 At roughly the halfway point of the body, insert ONE re-hook line that re-escalates
 curiosity and resets attention. Make it punchy and standalone.

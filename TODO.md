@@ -15,6 +15,8 @@
 - **Hot-take fact slot** — replaced dead "fact" slot with divisive debate topics. VALIDATED (Jun22 hot-take 813 views vs old 78-489).
 - **Channel-page optimization** — description, keywords, unsubscribed trailer (Ronaldo BLANKED), "🔥 World Cup 2026 Drama" playlist. All API-set, reversible.
 - **Audience re-tune → men 25-50** (2026-06-24) — `.env` niche, trend researcher + scriptwriter now target adult male fans who grew up with these stars (was wrongly "16-35 teens"). Added legacy/nostalgia + US/Western angles.
+- **NO POST-HOOK DIP rule** (2026-06-24) — retention curves proved weak videos lose ~70% of viewers in the 2s right after the hook (hook→body transition). Scriptwriter now requires the first body line to ESCALATE, never explain/set-up. Targets the single biggest drop point.
+- **Elimination/stakes bias** (2026-06-24) — knockouts/shock-exits drive SUBS best ("Turkiye KNOCKED OUT" converted above its view count). Added to trend ranking rules.
 - **Uploader token scope fix** — requests full union so upload runs don't strip analytics scopes.
 - **datetime serialization fix** — publish_at normalized to RFC3339 string before upload.
 

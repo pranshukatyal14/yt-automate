@@ -80,6 +80,11 @@ LEGACY/NOSTALGIA BIAS — the audience is men 25-50 who grew up with this golden
 "Is this the END of the Ronaldo/Messi era?", GOAT-legacy debates, and "the player we grew
 up with" framing hit hardest. Lean into legacy stakes, not just today's news.
 
+ELIMINATION/STAKES BIAS — high-stakes elimination moments convert viewers to SUBSCRIBERS
+best (our data: "Turkiye KNOCKED OUT" drove subs above its view count). Prioritise
+knockouts, shock exits, "X is OUT of the World Cup", do-or-die games, and tournament-defining
+upsets — the bigger the stakes, the more people subscribe to follow what happens next.
+
 US/WESTERN BIAS — ~42% of viewers are US/UK/Canada and the USA segment retains best and is
 most valuable. When relevant, prioritise angles with global/US pull: the US Men's Team,
 Christian Pulisic, USA upsets, or matchups Western audiences care about — alongside the
