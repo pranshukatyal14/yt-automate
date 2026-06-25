@@ -22,14 +22,19 @@
 
 ---
 
-## 🟡 QUEUED — ship when in-flight experiments report back (~when API processes Jun 22-24)
+## 🟡 QUEUED — ship when in-flight experiments report back (~when API processes Jun 23-25)
 
-These were deliberately held to keep current experiments clean (debate slot, geo-timing, channel page, audience re-tune):
+Held to keep current experiments clean (debate slot, geo-timing, channel page, audience re-tune + cliff fix). Ship trigger: API catches up to Jun 23-25 so we can read those experiments on a known baseline.
 
-1. **Tighten scripts further** — 90-120 → 70-95 words (~25-32s) for higher completion → target 60% retention.
-2. **Make seamless-loop mandate REQUIRED** (not optional) — re-watch multiplies reach (MY/ID already loop at 130%+).
-3. **Topic-ceiling bias** — prioritise biggest global names (Ronaldo > Messi > Mbappé/Neymar > rest). View ceiling = how many people care; every breakout so far is Ronaldo.
-   - (Was committed a771b67, reverted fe1c5bb to avoid muddying experiments.)
+1. **Make seamless-loop mandate REQUIRED** (not optional) — ✅ VALIDATED 2026-06-25: the 68s looping video hit 123% retention; MY/ID audiences loop at 130%+. Re-watch multiplies watch time. PRIORITISE this one.
+2. **Topic-ceiling bias** — prioritise biggest global names (Ronaldo > Messi > Mbappé/Neymar > rest). View ceiling = how many people care; every breakout so far is Ronaldo. (Was committed a771b67, reverted fe1c5bb.)
+
+## ❌ CANCELLED (data-driven reversal)
+
+- ~~**Tighten scripts 90-120 → 70-95 words**~~ — KILLED 2026-06-25. Clean length-vs-retention
+  data (processed videos): 55s+ retains 54% vs <35s at 40%; longest videos (59-68s) retain
+  60-123%; watch-time far higher on longer videos. Shortening would CUT watch time and HURT
+  retention. Keep scripts at 90-120 words / 50-60s. Possibly test slightly LONGER later (see below).
 
 ---
 
@@ -49,8 +54,17 @@ These were deliberately held to keep current experiments clean (debate slot, geo
 
 ---
 
+## 🧪 CANDIDATE EXPERIMENTS (test later, not queued yet)
+
+- **Slightly LONGER scripts** — data shows 55-68s videos retain best (60-123%). Once the loop-ending
+  change is in and measured, test nudging target from 50-60s → 58-65s. Cautious; one variable at a time.
+- **More debate-format content** — debate slot is the early view leader (1,075 avg views). Once its
+  retention processes, consider giving it a 2nd weekly slot or biasing other slots toward debate framing.
+
 ## 📌 WATCH-ITEMS (pending data, no action yet)
 
+- **Debate slot** (NEW) — 1,075 avg views = highest of any type, retention still processing. Confirm it holds.
+- **Fact slot** — still weakest on retention (~25-40%) even after hot-take upgrade; wins on views when spicy but doesn't hold. Watch whether hot-take facts close the gap.
 - **Badge → subscriber conversion** — verdict still pending (API lag). So far no clear lift; subs look like a volume game (~0.1% conversion regardless).
 - **Channel-page optimization → conversion** — measure once it's been live a few days.
-- **Jun 21 soft day** (957 views, 40% ret) — one-off or trend? Jun 22 recovered. Watch.
+- **Jun 21 soft day** (957 views, 40% ret) — one-off (Jun 22 recovered to 59.5%). Resolved unless it repeats.
