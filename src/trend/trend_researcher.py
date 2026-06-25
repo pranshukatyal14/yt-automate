@@ -85,6 +85,13 @@ best (our data: "Turkiye KNOCKED OUT" drove subs above its view count). Prioriti
 knockouts, shock exits, "X is OUT of the World Cup", do-or-die games, and tournament-defining
 upsets — the bigger the stakes, the more people subscribe to follow what happens next.
 
+TOPIC-CEILING / STAR-POWER RANKING — a video's view ceiling is capped by how many people
+care about its subject. EVERY breakout this channel has had is a Ronaldo video. So when
+choosing between topics of similar drama, ALWAYS pick the one with the biggest global star.
+Strict priority order: Ronaldo > Messi > Mbappé/Neymar/Haaland > other A-list stars > big
+national teams (Brazil/Argentina/England/France) > everyone else. A spicy take on Ronaldo
+beats an equally spicy take on a mid-tier player every time — pick the bigger name.
+
 US/WESTERN BIAS — ~42% of viewers are US/UK/Canada and the USA segment retains best and is
 most valuable. When relevant, prioritise angles with global/US pull: the US Men's Team,
 Christian Pulisic, USA upsets, or matchups Western audiences care about — alongside the

@@ -95,10 +95,15 @@ curiosity and resets attention. Make it punchy and standalone.
        "And then it flipped completely."
 This combats the swipe-away that kills retention around the 40–60% mark.
 
-LOOP ARCHITECTURE — make viewers re-watch:
-The last line of call_to_action must flow seamlessly into the first word of hook when looped.
-e.g. End: "And that is exactly..." Start: "...how it all began."
-The join must feel natural, not jarring.
+LOOP ARCHITECTURE — REQUIRED, not optional (data-proven: looping videos hit 120%+ retention):
+The last line of call_to_action MUST flow seamlessly into the first word of the hook when the
+video loops back to the start. This is mandatory — a clean loop multiplies watch time because
+viewers re-watch without realising. Construct the ending so the final words lead straight into
+the hook's opening words, forming one continuous sentence across the loop point.
+  e.g. End: "...and it all traces back to one moment." Start (hook): "One moment changed everything."
+  e.g. End: "And that is exactly..."  Start (hook): "...how Ronaldo lost it all."
+The join must feel natural and invisible, never jarring. Do NOT end on a dead stop like
+"Thanks for watching" or "The end" — that kills the loop. Every script must loop.
 
 ENGAGEMENT MANDATE — required in every script:
 - call_to_action: SUBSCRIBE is the priority — it is what unlocks the channel's growth.

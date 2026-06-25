@@ -17,17 +17,16 @@
 - **Audience re-tune → men 25-50** (2026-06-24) — `.env` niche, trend researcher + scriptwriter now target adult male fans who grew up with these stars (was wrongly "16-35 teens"). Added legacy/nostalgia + US/Western angles.
 - **NO POST-HOOK DIP rule** (2026-06-24) — retention curves proved weak videos lose ~70% of viewers in the 2s right after the hook (hook→body transition). Scriptwriter now requires the first body line to ESCALATE, never explain/set-up. Targets the single biggest drop point.
 - **Elimination/stakes bias** (2026-06-24) — knockouts/shock-exits drive SUBS best ("Turkiye KNOCKED OUT" converted above its view count). Added to trend ranking rules.
+- **Required loop-ending** (2026-06-25) — made the seamless-loop mandate REQUIRED (not optional), banned dead-stop endings. Validated by the 68s/123%-retention video; looping multiplies watch time (#1 algo signal). Targets the END of the retention curve.
+- **Topic-ceiling / star-power ranking** (2026-06-25) — strict priority Ronaldo > Messi > Mbappé/Neymar/Haaland > A-listers > big national teams > rest. Every breakout has been Ronaldo; view ceiling = how many people care. Targets reach.
 - **Uploader token scope fix** — requests full union so upload runs don't strip analytics scopes.
 - **datetime serialization fix** — publish_at normalized to RFC3339 string before upload.
 
 ---
 
-## 🟡 QUEUED — ship when in-flight experiments report back (~when API processes Jun 23-25)
+## 🟡 QUEUED
 
-Held to keep current experiments clean (debate slot, geo-timing, channel page, audience re-tune + cliff fix). Ship trigger: API catches up to Jun 23-25 so we can read those experiments on a known baseline.
-
-1. **Make seamless-loop mandate REQUIRED** (not optional) — ✅ VALIDATED 2026-06-25: the 68s looping video hit 123% retention; MY/ID audiences loop at 130%+. Re-watch multiplies watch time. PRIORITISE this one.
-2. **Topic-ceiling bias** — prioritise biggest global names (Ronaldo > Messi > Mbappé/Neymar > rest). View ceiling = how many people care; every breakout so far is Ronaldo. (Was committed a771b67, reverted fe1c5bb.)
+(empty — both items shipped 2026-06-25, see below)
 
 ## ❌ CANCELLED (data-driven reversal)
 
