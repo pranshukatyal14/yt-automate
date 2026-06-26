@@ -19,6 +19,7 @@
 - **Elimination/stakes bias** (2026-06-24) — knockouts/shock-exits drive SUBS best ("Turkiye KNOCKED OUT" converted above its view count). Added to trend ranking rules.
 - **Required loop-ending** (2026-06-25) — made the seamless-loop mandate REQUIRED (not optional), banned dead-stop endings. Validated by the 68s/123%-retention video; looping multiplies watch time (#1 algo signal). Targets the END of the retention curve.
 - **Topic-ceiling / star-power ranking** (2026-06-25) — strict priority Ronaldo > Messi > Mbappé/Neymar/Haaland > A-listers > big national teams > rest. Every breakout has been Ronaldo; view ceiling = how many people care. Targets reach.
+- **Plausibility guardrail** (2026-06-25) — shocking-but-TRUE only. Diagnosed from Jun24 flops: "Ronaldo's Career ENDS" (fabricated) got 1 view vs "Ronaldo's shocking collapse" (real) 1116. Fake/impossible claims flop AND risk the channel. Added to trend strategist.
 - **Uploader token scope fix** — requests full union so upload runs don't strip analytics scopes.
 - **datetime serialization fix** — publish_at normalized to RFC3339 string before upload.
 
