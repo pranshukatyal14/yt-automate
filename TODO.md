@@ -1,7 +1,30 @@
 # LogiSnap — Action Items & Backlog
 
 > Living list of what's shipped, what's queued, and why. Update as things move.
-> Last updated: 2026-06-24
+> Last updated: 2026-06-26
+
+---
+
+## 📅 SCHEDULED — Monday 2026-06-29: Real-data integration (HIGH priority)
+
+**Build:** plug a real football API into the trend researcher so topics come from
+ACTUAL World Cup 2026 results, not AI-fabricated events. Fixes the credibility ceiling +
+lets us ride real viral moments. Time-sensitive: WC ends ~July 19, so payback window is short.
+
+**Key context (researched 2026-06-26):**
+- The pipeline ALREADY has Gemini Google-Search grounding, but keeps hitting Gemini's 429
+  rate limit and falling back to Groq, which fabricates from training data. So we default to
+  fabrication when quota runs out. A football API makes real-data sourcing RELIABLE.
+- Free APIs: football-data.org (free forever, top comps), API-Football (~100 req/day free),
+  TheStatsAPI (all 104 WC2026 fixtures, no signup). Start with football-data.org.
+- Build plan: fetcher module → feed real fixtures/results/scorers as topic candidates into
+  trend researcher → handle "no match today" gracefully → test → deploy.
+- Deploy AFTER current package (Jun24-26 changes) results land so we don't muddy measurement.
+
+**DECIDED — real match CLIPS = hard NO** (do NOT switch from stock/AI footage): FIFA Content ID
+auto-claims all WC broadcast footage → strikes + the "reused content" policy PERMANENTLY blocks
+YPP monetization (our whole goal). Engagement upgrade path instead = AI-generated football
+visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 
 ---
 
