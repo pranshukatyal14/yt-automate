@@ -50,7 +50,11 @@ visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 
 ## 🟡 QUEUED
 
-(empty — both items shipped 2026-06-25, see below)
+1. **Batch-diversity guardrail** (found 2026-06-28) — the topic-ceiling bias over-concentrated:
+   Jun28 batch was ALL 4 Ronaldo, with player_story + match_result near-DUPLICATES ("Ronaldo
+   scores in SIXTH World Cup"). Need a rule so the 4 slots cover DIFFERENT players/stories within
+   a batch (still big names, but spread — e.g. don't repeat the same news item across slots).
+   Pair this with the Monday real-data work (real fixtures naturally diversify topics).
 
 ## ❌ CANCELLED (data-driven reversal)
 
