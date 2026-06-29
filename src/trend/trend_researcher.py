@@ -275,6 +275,16 @@ class TrendResearcher:
                 "no extra commentary."
             )
 
+        # Ground in REAL match data (football-data.org) so topics are based on
+        # actual results, not fabrications. Empty string if unavailable → no change.
+        try:
+            from src.trend.live_data import build_context_block
+            _real = build_context_block(days=3)
+            if _real:
+                search_prompt = _real + "\n\n" + search_prompt
+        except Exception:
+            pass
+
         response = self._client.models.generate_content(
             model=self._model,
             contents=search_prompt,
@@ -378,9 +388,21 @@ class TrendResearcher:
             "match_result": "Focus on recent FIFA World Cup 2026 match results and scorelines.",
             "fact":         "Focus on a DIVISIVE hot-take/debate fans argue about — e.g. 'Messi is overrated', 'Ronaldo is finished', 'X vs Y, not even close'. A bold opinion or ranking that takes a side, NOT a neutral stat.",
         }.get(video_type or "", "")
+        # Ground Groq in REAL match data — it has no live search, so without this it
+        # fabricates results. Empty string if unavailable → behaves as before.
+        real_block = ""
+        try:
+            from src.trend.live_data import build_context_block
+            real_block = build_context_block(days=3)
+        except Exception:
+            pass
         prompt = (
-            f"Give me a numbered list of 20 highly viral and trending topics right now {niche_clause}. "
-            f"{type_clause} Return ONLY a plain numbered list, one topic per line, no commentary."
+            (real_block + "\n\n" if real_block else "")
+            + f"Give me a numbered list of 20 highly viral and trending topics right now {niche_clause}. "
+            f"{type_clause} "
+            + ("Base every topic on the REAL results/scorers above — use actual teams, scorelines and "
+               "players, do NOT invent matches or stats. " if real_block else "")
+            + "Return ONLY a plain numbered list, one topic per line, no commentary."
         )
         raw = self._groq_chat(_STRATEGIST_SYSTEM, prompt)
         trends = []

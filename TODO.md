@@ -5,16 +5,13 @@
 
 ---
 
-## ⛔ BLOCKED ON USER — Real-data integration (HIGH priority)
+## ✅ DONE 2026-06-29 — Real-data integration (was HIGH priority)
 
-**STATUS 2026-06-29:** ready to build, but BLOCKED — needs a free API key only the user can create.
-ACTION FOR USER: sign up at football-data.org (1 min, free) → add key to .env as
-FOOTBALL_API_KEY. Then I build the fetcher + wire it in + test. Not shipping untested
-external-API code into the live pipeline before a run.
-
-**Build:** plug a real football API into the trend researcher so topics come from
-ACTUAL World Cup 2026 results, not AI-fabricated events. Fixes the credibility ceiling +
-lets us ride real viral moments. Time-sensitive: WC ends ~July 19, so payback window is short.
+SHIPPED: football-data.org wired into the trend researcher. New module src/trend/live_data.py
+fetches real WC results + top scorers (hard try/except → falls back to AI trends if anything
+fails, can't break a run). Both Gemini + Groq paths now grounded: topics come from ACTUAL
+matches (e.g. "Senegal 5-0 Iraq", "Messi's 6 goals") instead of fabricated events. API key in
+.env as FOOTBALL_API_KEY (gitignored). Fixes the credibility ceiling + lets us ride real moments.
 
 **Key context (researched 2026-06-26):**
 - The pipeline ALREADY has Gemini Google-Search grounding, but keeps hitting Gemini's 429
