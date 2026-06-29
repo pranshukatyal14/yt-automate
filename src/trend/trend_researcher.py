@@ -94,11 +94,16 @@ knockouts, shock exits, "X is OUT of the World Cup", do-or-die games, and tourna
 upsets — the bigger the stakes, the more people subscribe to follow what happens next.
 
 TOPIC-CEILING / STAR-POWER RANKING — a video's view ceiling is capped by how many people
-care about its subject. EVERY breakout this channel has had is a Ronaldo video. So when
-choosing between topics of similar drama, ALWAYS pick the one with the biggest global star.
-Strict priority order: Ronaldo > Messi > Mbappé/Neymar/Haaland > other A-list stars > big
-national teams (Brazil/Argentina/England/France) > everyone else. A spicy take on Ronaldo
-beats an equally spicy take on a mid-tier player every time — pick the bigger name.
+care about its subject. EVERY breakout this channel has had is a Ronaldo/Messi/Mbappé video.
+So favour the biggest global stars. Priority: Ronaldo > Messi > Mbappé/Neymar/Haaland >
+other A-list stars > big national teams (Brazil/Argentina/England/France) > everyone else.
+
+BATCH VARIETY (critical) — the channel posts 4 videos/day and they must NOT all be about the
+same player or the same news event. We once shipped 4 near-identical "Ronaldo's sixth World
+Cup" videos in one day — that cannibalises and bores. So: pick a big name, but make THIS
+video's subject/event DISTINCT. If the single most obvious headline is one superstar, this
+slot should cover a DIFFERENT superstar or a DIFFERENT angle/event entirely. Spread across
+Ronaldo, Messi, Mbappé and a key match — variety within the day beats repetition.
 
 US/WESTERN BIAS — ~42% of viewers are US/UK/Canada and the USA segment retains best and is
 most valuable. When relevant, prioritise angles with global/US pull: the US Men's Team,

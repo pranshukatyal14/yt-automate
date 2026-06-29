@@ -5,7 +5,12 @@
 
 ---
 
-## 📅 SCHEDULED — Monday 2026-06-29: Real-data integration (HIGH priority)
+## ⛔ BLOCKED ON USER — Real-data integration (HIGH priority)
+
+**STATUS 2026-06-29:** ready to build, but BLOCKED — needs a free API key only the user can create.
+ACTION FOR USER: sign up at football-data.org (1 min, free) → add key to .env as
+FOOTBALL_API_KEY. Then I build the fetcher + wire it in + test. Not shipping untested
+external-API code into the live pipeline before a run.
 
 **Build:** plug a real football API into the trend researcher so topics come from
 ACTUAL World Cup 2026 results, not AI-fabricated events. Fixes the credibility ceiling +
@@ -42,6 +47,9 @@ visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 - **Elimination/stakes bias** (2026-06-24) — knockouts/shock-exits drive SUBS best ("Turkiye KNOCKED OUT" converted above its view count). Added to trend ranking rules.
 - **Required loop-ending** (2026-06-25) — made the seamless-loop mandate REQUIRED (not optional), banned dead-stop endings. Validated by the 68s/123%-retention video; looping multiplies watch time (#1 algo signal). Targets the END of the retention curve.
 - **Topic-ceiling / star-power ranking** (2026-06-25) — strict priority Ronaldo > Messi > Mbappé/Neymar/Haaland > A-listers > big national teams > rest. Every breakout has been Ronaldo; view ceiling = how many people care. Targets reach.
+- **Batch-variety guardrail** (2026-06-29) — prompt-level balance to topic-ceiling: pick big names BUT vary player/event across the day's 4 slots (after a Jun28 all-Ronaldo batch). Proper cross-slot dedup still queued.
+- **Unlisted 46 off-topic pre-pivot videos** (2026-06-29) — channel now 100% football-facing → better channel-page conversion + higher channel-avg retention. Reversible.
+- **Reverted slot schedule** (2026-06-29) — back to normal 17:30–23:30 global spread after the Jun28 late-run temp override.
 - **Plausibility guardrail** (2026-06-25) — shocking-but-TRUE only. Diagnosed from Jun24 flops: "Ronaldo's Career ENDS" (fabricated) got 1 view vs "Ronaldo's shocking collapse" (real) 1116. Fake/impossible claims flop AND risk the channel. Added to trend strategist.
 - **Uploader token scope fix** — requests full union so upload runs don't strip analytics scopes.
 - **datetime serialization fix** — publish_at normalized to RFC3339 string before upload.
@@ -50,11 +58,13 @@ visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 
 ## 🟡 QUEUED
 
-1. **Batch-diversity guardrail** (found 2026-06-28) — the topic-ceiling bias over-concentrated:
-   Jun28 batch was ALL 4 Ronaldo, with player_story + match_result near-DUPLICATES ("Ronaldo
-   scores in SIXTH World Cup"). Need a rule so the 4 slots cover DIFFERENT players/stories within
-   a batch (still big names, but spread — e.g. don't repeat the same news item across slots).
-   Pair this with the Monday real-data work (real fixtures naturally diversify topics).
+1. **Cross-slot topic dedup (proper fix)** — the 2026-06-29 batch-variety guardrail is prompt-level
+   only (each slot's research call is independent, can't see the others). A stronger fix: thread the
+   already-chosen topics through _run_all_bg → trend research so later slots actively avoid them.
+   Code change in app.py + trend_researcher. Do when there's time.
+2. **Fact → debate format swap** — fact is the weakest type (mostly 78-490 views), debate is the best
+   (1232/1163 + top sub-driver). Replace the fact slot with a 2nd debate-style slot. Needs new
+   video_type handling in trend researcher + scriptwriter (medium effort, test carefully). High EV.
 
 ## ❌ CANCELLED (data-driven reversal)
 

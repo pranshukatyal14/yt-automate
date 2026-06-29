@@ -76,11 +76,14 @@ class _RunLogHandler(logging.Handler):
 # GB 13% — ~41% US/UK). Slots span 17:30–23:30 IST to cover India evening AND
 # stretch into UK evening prime (23:30 IST = 18:00 GMT) + US midday. Kept before
 # midnight so scheduled-publish times never fall in the past on an afternoon run.
+# GLOBAL-audience spread (geo: IN 52%, US 14% best-retention, GB 10% — ~30% US/UK/CA).
+# Slots span 17:30–23:30 IST to cover India evening + UK evening prime + US midday.
+# (A late-run "now+15min" fallback in _calc_slot_publish_at handles past slots.)
 _SLOT_SCHEDULE_IST: dict[str, tuple[int, int]] = {
-    "player_story": (17, 30),  # 17:30 IST — IN eve / GB 13:00 / US 08:00
-    "debate":       (19, 30),  # 19:30 IST — IN eve / GB 15:00 / US 10:00
-    "match_result": (21, 30),  # 21:30 IST — IN peak / GB 17:00 / US 12:00
-    "fact":         (23, 30),  # 23:30 IST — IN late / GB 18:00 evening / US 13:00
+    "player_story": (17, 30),  # 17:30 IST
+    "debate":       (19, 30),  # 19:30 IST
+    "match_result": (21, 30),  # 21:30 IST
+    "fact":         (23, 30),  # 23:30 IST
 }
 
 _run_alls: dict[str, dict] = {}
