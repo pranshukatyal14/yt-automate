@@ -47,6 +47,7 @@ visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 - **Batch-variety guardrail** (2026-06-29) — prompt-level balance to topic-ceiling: pick big names BUT vary player/event across the day's 4 slots (after a Jun28 all-Ronaldo batch). Proper cross-slot dedup still queued.
 - **Unlisted 46 off-topic pre-pivot videos** (2026-06-29) — channel now 100% football-facing → better channel-page conversion + higher channel-avg retention. Reversible.
 - **Reverted slot schedule** (2026-06-29) — back to normal 17:30–23:30 global spread after the Jun28 late-run temp override.
+- **Cross-slot topic dedup** (2026-06-30) — _run_all_bg now threads each slot's chosen topic into the next slot's research; picker is told to avoid the same player/event. Fixes the all-Ronaldo batches (Jun28/29) that caused view volatility. Tested: with Ronaldo taken, picker switched to Mbappé. Replaces the weaker prompt-only guardrail.
 - **Plausibility guardrail** (2026-06-25) — shocking-but-TRUE only. Diagnosed from Jun24 flops: "Ronaldo's Career ENDS" (fabricated) got 1 view vs "Ronaldo's shocking collapse" (real) 1116. Fake/impossible claims flop AND risk the channel. Added to trend strategist.
 - **Uploader token scope fix** — requests full union so upload runs don't strip analytics scopes.
 - **datetime serialization fix** — publish_at normalized to RFC3339 string before upload.
@@ -55,11 +56,7 @@ visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 
 ## 🟡 QUEUED
 
-1. **Cross-slot topic dedup (proper fix)** — the 2026-06-29 batch-variety guardrail is prompt-level
-   only (each slot's research call is independent, can't see the others). A stronger fix: thread the
-   already-chosen topics through _run_all_bg → trend research so later slots actively avoid them.
-   Code change in app.py + trend_researcher. Do when there's time.
-2. **Fact → debate format swap** — fact is the weakest type (mostly 78-490 views), debate is the best
+1. **Fact → debate format swap** — fact is the weakest type (mostly 78-490 views), debate is the best
    (1232/1163 + top sub-driver). Replace the fact slot with a 2nd debate-style slot. Needs new
    video_type handling in trend researcher + scriptwriter (medium effort, test carefully). High EV.
 

@@ -185,6 +185,7 @@ def run_pipeline(
     lang: str = "en",
     publish_at: str | None = None,
     video_type: str | None = None,
+    avoid_topics: list[str] | None = None,
 ) -> dict:
     """
     Execute the full video generation pipeline.
@@ -211,7 +212,7 @@ def run_pipeline(
         logger.info("AUTO MODE — researching trending topics…")
         logger.info("=" * 60)
         researcher = TrendResearcher()
-        trend_data = researcher.research(video_type=video_type)
+        trend_data = researcher.research(video_type=video_type, avoid_topics=avoid_topics)
         topic      = trend_data["winner_topic"]
         style      = trend_data["style"]   # override style from trend research
         logger.info("AUTO MODE picked → topic='%s'  style=%s", topic, style)

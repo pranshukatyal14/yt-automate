@@ -131,6 +131,7 @@ def _run_pipeline_bg(run_id: str, data: dict) -> None:
             lang=data.get("lang", "en"),
             publish_at=publish_at,
             video_type=data.get("video_type") or None,
+            avoid_topics=data.get("avoid_topics") or None,
         )
 
         # Keep only JSON-safe scalar fields
@@ -157,6 +158,7 @@ def _run_pipeline_bg(run_id: str, data: dict) -> None:
 # ── Run-all (3 slots sequentially) ────────────────────────────────────────────
 
 def _run_all_bg(run_all_id: str, slot_types: list[str]) -> None:
+    chosen_topics: list[str] = []   # cross-slot diversity: topics already taken today
     for slot_type in slot_types:
         run_id    = uuid.uuid4().hex[:8]
         pub_at    = _calc_slot_publish_at(slot_type)
@@ -182,6 +184,7 @@ def _run_all_bg(run_all_id: str, slot_types: list[str]) -> None:
             "lang":           "en",
             "video_type":     slot_type,
             "publish_at_utc": pub_str,
+            "avoid_topics":   list(chosen_topics),   # don't repeat earlier slots' topics
         }
         _run_pipeline_bg(run_id, data)   # blocks until this slot finishes
 
@@ -191,6 +194,9 @@ def _run_all_bg(run_all_id: str, slot_types: list[str]) -> None:
             result = _runs[run_id].get("result", {})
             if result.get("youtube_url"):
                 _run_alls[run_all_id]["slots"][slot_type]["youtube_url"] = result["youtube_url"]
+            picked = result.get("topic")
+            if picked:
+                chosen_topics.append(picked)
 
     with _lock:
         all_ok = all(

@@ -121,6 +121,22 @@ Return ONLY a JSON object with exactly these keys:
 """
 
 
+def _avoid_clause(avoid_topics: list[str] | None) -> str:
+    """Build a prompt clause telling the picker to avoid already-chosen topics
+    (cross-slot diversity). Returns '' when there's nothing to avoid."""
+    avoid = [t for t in (avoid_topics or []) if t]
+    if not avoid:
+        return ""
+    joined = "\n".join(f"  - {t}" for t in avoid)
+    return (
+        "\n\nBATCH DIVERSITY — these topics are ALREADY taken by other videos posting "
+        "today:\n" + joined + "\nYou MUST pick a topic about a DIFFERENT player and a "
+        "DIFFERENT event/storyline than ALL of the above. If the obvious headline is the "
+        "same star/story as one already taken, switch to the next-biggest star or a "
+        "different angle entirely. Do not repeat the same player or news event."
+    )
+
+
 class TrendResearcher:
     """
     Researches trending topics and uses Gemini to pick the best for a YouTube Short.
@@ -144,7 +160,8 @@ class TrendResearcher:
             self._model, self._niche or "(none)", self._fmt or "(none)",
         )
 
-    def research(self, video_type: str | None = None) -> dict[str, Any]:
+    def research(self, video_type: str | None = None,
+                 avoid_topics: list[str] | None = None) -> dict[str, Any]:
         """
         Fetch trending topics and let Gemini pick the best for a viral Short.
 
@@ -152,6 +169,9 @@ class TrendResearcher:
         ----------
         video_type : optional — "player_story", "match_result", or "fact".
                      Focuses the search and ranking on that content type.
+        avoid_topics : topics already chosen for OTHER slots in today's batch —
+                     the picker avoids the same player/event so the day's 4 videos
+                     stay varied (cross-slot diversity).
 
         Returns
         -------
@@ -177,10 +197,10 @@ class TrendResearcher:
             )
 
         try:
-            result = self._pick_best(trends)
+            result = self._pick_best(trends, avoid_topics=avoid_topics)
         except Exception as exc:
             logger.warning("Gemini _pick_best failed (%s) — using Groq fallback", exc)
-            result = self._pick_best_groq(trends)
+            result = self._pick_best_groq(trends, avoid_topics=avoid_topics)
         result["raw_trends"] = trends
 
         logger.info(
@@ -316,9 +336,10 @@ class TrendResearcher:
         stop=stop_after_attempt(3),
         reraise=True,
     )
-    def _pick_best(self, trends: list[str]) -> dict[str, Any]:
+    def _pick_best(self, trends: list[str], avoid_topics: list[str] | None = None) -> dict[str, Any]:
         numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(trends))
         prompt   = _STRATEGIST_PROMPT.format(trends_list=numbered)
+        prompt  += _avoid_clause(avoid_topics)
         if self._niche:
             prompt += (
                 f"\n\nCHANNEL NICHE LOCK: This channel is ONLY about \"{self._niche}\". "
@@ -416,10 +437,11 @@ class TrendResearcher:
         logger.info("Groq trend fetch returned %d topics", len(trends))
         return trends[:40]
 
-    def _pick_best_groq(self, trends: list[str]) -> dict[str, Any]:
+    def _pick_best_groq(self, trends: list[str], avoid_topics: list[str] | None = None) -> dict[str, Any]:
         """Groq fallback for topic selection — returns same JSON schema as Gemini."""
         numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(trends))
         prompt = _STRATEGIST_PROMPT.format(trends_list=numbered)
+        prompt += _avoid_clause(avoid_topics)
         if self._niche:
             prompt += f'\n\nCHANNEL NICHE LOCK: "{self._niche}". Winner MUST fit the niche.'
         prompt += '\n\nReturn ONLY valid JSON with keys: winner_topic, winner_title, style, rationale, top3.'
