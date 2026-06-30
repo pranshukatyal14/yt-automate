@@ -132,6 +132,7 @@ def _run_pipeline_bg(run_id: str, data: dict) -> None:
             publish_at=publish_at,
             video_type=data.get("video_type") or None,
             avoid_topics=data.get("avoid_topics") or None,
+            use_ai_images=data.get("use_ai_images", False),
         )
 
         # Keep only JSON-safe scalar fields
@@ -329,6 +330,40 @@ def start_run():
 
     t.start()
     return jsonify({"run_id": run_id})
+
+
+# ── AI-image video (EXPERIMENTAL, separate from the main pipeline) ─────────────
+# Generates a preview Short using free Pollinations AI football scene images
+# instead of stock footage. Does NOT upload — produces a local file to review.
+@app.route("/api/generate-ai-video", methods=["POST"])
+def generate_ai_video():
+    data = request.get_json(force=True) or {}
+    run_id = uuid.uuid4().hex[:8]
+    job = {
+        "topic":         (data.get("topic") or "").strip() or None,
+        "video_type":    data.get("video_type") or None,
+        "style":         data.get("style", "story"),
+        "lang":          data.get("lang", "en"),
+        "upload":        False,          # never auto-upload — preview only
+        "use_ai_images": True,           # the whole point of this section
+    }
+    t = threading.Thread(target=_run_pipeline_bg, args=(run_id, job), daemon=True)
+    with _lock:
+        _runs[run_id] = {"status": "running", "stage": 0, "progress": {},
+                         "logs": [], "result": {}, "error": "", "_thread": t}
+    t.start()
+    return jsonify({"run_id": run_id})
+
+
+@app.route("/api/ai-video-file/<run_id>")
+def ai_video_file(run_id: str):
+    from flask import send_file, abort
+    with _lock:
+        run = _runs.get(run_id)
+    path = (run or {}).get("result", {}).get("video_path")
+    if not path or not Path(path).exists():
+        return abort(404)
+    return send_file(Path(path).resolve(), mimetype="video/mp4")
 
 
 @app.route("/api/status/<run_id>")

@@ -665,6 +665,7 @@ class VideoEditorService:
         lang: str = "en",
         hook_text: str | None = None,
         hook_card_duration: float = 0.5,
+        use_ai_images: bool = False,
     ) -> Path:
         """
         Full render pipeline.
@@ -691,7 +692,7 @@ class VideoEditorService:
             logger.debug("Audio fade-out skipped: %s", exc)
 
         # 1. HD background with Ken Burns animation  (progress 8 → 65 inside)
-        bg = self._build_background(visual_keywords, total_duration)
+        bg = self._build_background(visual_keywords, total_duration, use_ai_images=use_ai_images)
 
         # 2. Attach audio
         bg_with_audio = bg.with_audio(audio_clip)
@@ -754,11 +755,31 @@ class VideoEditorService:
 
     # ── Background builder ─────────────────────────────────────────────────────
 
-    def _build_background(self, visual_keywords: list[str], total_duration: float):
+    def _build_background(self, visual_keywords: list[str], total_duration: float,
+                          use_ai_images: bool = False):
         clip_paths: list[Path] = []
         n_kw = max(len(visual_keywords), 1)
 
+        # ── AI-image mode (separate experimental path) ─────────────────────────
+        # Builds the background from free Pollinations football scene images
+        # instead of stock footage. Only used by the standalone AI-video section;
+        # the normal pipeline never passes use_ai_images=True. Falls back to stock.
+        if use_ai_images:
+            try:
+                from src.video.ai_images import generate_scene_images
+                # Request a modest number of UNIQUE images (Pollinations throttles
+                # rapid-fire bursts); the slot system cycles them across the video.
+                ai_paths = generate_scene_images(self.clip_cache_dir, n=8, seed_base=len(visual_keywords))
+                if ai_paths:
+                    clip_paths = ai_paths
+                else:
+                    logger.warning("AI images empty — falling back to stock footage")
+            except Exception as exc:
+                logger.warning("AI image mode failed (%s) — falling back to stock", str(exc)[:90])
+
         for kw_idx, kw in enumerate(visual_keywords):
+            if clip_paths and use_ai_images:
+                break  # already have AI images
             # Spread fetch progress: 8 % → 55 %  across all keywords
             fetch_pct = 8 + int(47 * kw_idx / n_kw)
             logger.info("[PROGRESS:editing:%d]", fetch_pct)
@@ -824,18 +845,25 @@ class VideoEditorService:
             proc_pct = 57 + int(8 * i / n_slots_total)
             logger.info("[PROGRESS:editing:%d]", proc_pct)
             try:
-                raw      = VideoFileClip(str(path))
-                trim_end = min(slot_duration, raw.duration)
-
                 # Alternate zoom direction: even clips zoom in, odd clips zoom out
                 zoom_ratio = 0.06 if i % 2 == 0 else -0.04
 
-                vc = (
-                    raw
-                    .subclipped(0, trim_end)
-                    .resized((W, H))
-                    .with_duration(slot_duration)
-                )
+                if path.suffix.lower() in (".jpg", ".jpeg", ".png"):
+                    # AI-generated still → Ken Burns gives it motion
+                    vc = (
+                        ImageClip(str(path))
+                        .resized((W, H))
+                        .with_duration(slot_duration)
+                    )
+                else:
+                    raw      = VideoFileClip(str(path))
+                    trim_end = min(slot_duration, raw.duration)
+                    vc = (
+                        raw
+                        .subclipped(0, trim_end)
+                        .resized((W, H))
+                        .with_duration(slot_duration)
+                    )
                 vc = _apply_ken_burns(vc, zoom_ratio=abs(zoom_ratio))
                 processed.append(vc)
             except Exception as exc:

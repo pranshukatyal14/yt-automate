@@ -186,6 +186,7 @@ def run_pipeline(
     publish_at: str | None = None,
     video_type: str | None = None,
     avoid_topics: list[str] | None = None,
+    use_ai_images: bool = False,
 ) -> dict:
     """
     Execute the full video generation pipeline.
@@ -338,6 +339,7 @@ def run_pipeline(
             output_filename=f"{run_id}_final",
             lang=lang,
             hook_text=script.get("hook"),
+            use_ai_images=use_ai_images,
         )
 
         repo.set_video(doc_id, str(video_path))

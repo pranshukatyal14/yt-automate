@@ -466,6 +466,26 @@
     </button>
   </div>
 
+  <!-- ── AI Video Lab (experimental, separate from main pipeline) ── -->
+  <div class="plan-card" id="aiVideoLab" style="border:1px solid #6d28d9;background:linear-gradient(180deg,#1e1b4b33,#0000);">
+    <div class="plan-title">🧪 AI Video Lab <span style="font-size:11px;color:#a78bfa;font-weight:400;">— experimental · free AI-generated visuals · preview only (no upload)</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0;">
+      <input type="text" id="aiTopic" placeholder="Topic (optional — blank = auto)" style="flex:1;min-width:220px;padding:9px 12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:13px;" />
+      <select id="aiType" style="padding:9px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:13px;">
+        <option value="">Auto type</option>
+        <option value="player_story">Player story</option>
+        <option value="debate">Debate</option>
+        <option value="match_result">Match result</option>
+        <option value="fact">Fact</option>
+      </select>
+      <button class="btn-run-all-today" id="aiGenBtn" onclick="generateAiVideo()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);width:auto;padding:9px 18px;">
+        ✨&nbsp; Generate AI Video
+      </button>
+    </div>
+    <div id="aiStatus" style="font-size:13px;color:#94a3b8;"></div>
+    <video id="aiPreview" controls playsinline class="hidden" style="width:100%;max-width:340px;border-radius:10px;margin-top:10px;display:block;"></video>
+  </div>
+
   <!-- ── Tab bar ── -->
   <div class="tab-bar">
     <div class="tab-list" id="tabList"></div>
@@ -935,6 +955,47 @@
 
   let runAllId    = null;
   let runAllTimer = null;
+
+  // ── AI Video Lab (experimental, isolated from main pipeline) ──────────────
+  async function generateAiVideo() {
+    const btn    = document.getElementById('aiGenBtn');
+    const status = document.getElementById('aiStatus');
+    const prev   = document.getElementById('aiPreview');
+    btn.disabled = true; btn.textContent = '⏳ Generating…';
+    prev.classList.add('hidden');
+    status.textContent = 'Starting — generating AI script, voice & images…';
+    try {
+      const body = {
+        topic:      document.getElementById('aiTopic').value,
+        video_type: document.getElementById('aiType').value,
+      };
+      const r = await fetch('/api/generate-ai-video', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+      });
+      const { run_id } = await r.json();
+      const stageNames = {1:'Script',2:'Voiceover',3:'Captions',4:'AI images + render',5:'Finalising',6:'Done'};
+      const poll = setInterval(async () => {
+        const s = await (await fetch('/api/status/' + run_id)).json();
+        const ed = (s.progress && s.progress.editing) ? ` (${s.progress.editing}%)` : '';
+        status.textContent = `${stageNames[s.stage] || 'Working'}…${ed}`;
+        if (s.status === 'complete') {
+          clearInterval(poll);
+          btn.disabled = false; btn.textContent = '✨ Generate AI Video';
+          status.innerHTML = '✅ Done — preview below (not uploaded). Topic: <b>' +
+            ((s.result && s.result.topic) || '—') + '</b>';
+          prev.src = '/api/ai-video-file/' + run_id + '?t=' + Date.now();
+          prev.classList.remove('hidden');
+        } else if (s.status === 'failed' || s.status === 'error') {
+          clearInterval(poll);
+          btn.disabled = false; btn.textContent = '✨ Generate AI Video';
+          status.textContent = '❌ Failed: ' + (s.error || 'unknown error');
+        }
+      }, 2500);
+    } catch (e) {
+      btn.disabled = false; btn.textContent = '✨ Generate AI Video';
+      status.textContent = '❌ ' + e;
+    }
+  }
 
   async function runAllToday() {
     const btn = document.getElementById('runAllTodayBtn');
