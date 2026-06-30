@@ -56,7 +56,15 @@ visuals (copyright-free), NOT real clips. Researched/decided 2026-06-26.
 
 ## 🟡 QUEUED
 
-1. **Fact → debate format swap** — fact is the weakest type (mostly 78-490 views), debate is the best
+1. **AI Video Lab — fix repetitive visuals** (PARKED 2026-06-30, user: "do this later") — first
+   preview was bad: only ~8 unique AI images cycle across ~23 slots in a 50s video → same shots
+   repeat 3×, looks cheap. Fixes to try: (a) expand _SCENE_PROMPTS to ~20 genuinely DIFFERENT scenes
+   (close-ups, fans, tunnel, bench, manager, trophy, wide/aerial, varied colors/times); (b) generate
+   ~16 unique images (spaced to beat Pollinations throttle); (c) longer slot duration in AI mode (~3s).
+   HONEST CAVEAT: generic AI football images can't show specific players/moments — even fixed it may
+   not beat stock; re-evaluate vs paid AI-video. Feature is isolated + preview-only — does NOT touch
+   the live pipeline.
+2. **Fact → debate format swap** — fact is the weakest type (mostly 78-490 views), debate is the best
    (1232/1163 + top sub-driver). Replace the fact slot with a 2nd debate-style slot. Needs new
    video_type handling in trend researcher + scriptwriter (medium effort, test carefully). High EV.
 
